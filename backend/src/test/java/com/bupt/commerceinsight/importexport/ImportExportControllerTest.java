@@ -38,9 +38,9 @@ class ImportExportControllerTest {
         mockMvc.perform(get("/api/import/tasks/1001/errors")
                 .header("Authorization", "Bearer mock-token"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.records[0].lineNo", equalTo(18)))
-            .andExpect(jsonPath("$.data.records[0].rawValue", equalTo("-1")))
-            .andExpect(jsonPath("$.data.records[0].reason", equalTo("金额不能为负数")));
+            .andExpect(jsonPath("$.data.records[0].lineNumber", equalTo(18)))
+            .andExpect(jsonPath("$.data.records[0].fieldValue", equalTo("-1")))
+            .andExpect(jsonPath("$.data.records[0].errorReason", equalTo("金额不能为负数")));
     }
 
     @Test

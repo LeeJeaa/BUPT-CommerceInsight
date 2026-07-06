@@ -57,7 +57,7 @@ public class JdbcTpccService implements TpccService {
             """, orderId, request.getDistrictId(), request.getWarehouseId());
 
         BigDecimal totalAmount = BigDecimal.ZERO;
-        int lineNumber = 1;
+        int orderLineNo = 1;
         for (NewOrderItemRequest item : request.getItems()) {
             Map<String, Object> itemStock = requireItemStock(request.getWarehouseId(), item.getItemId());
             BigDecimal itemPrice = (BigDecimal) itemStock.get("item_price");
@@ -68,10 +68,10 @@ public class JdbcTpccService implements TpccService {
                     ol_o_id, ol_d_id, ol_w_id, ol_number, ol_i_id, ol_supply_w_id,
                     ol_delivery_d, ol_quantity, ol_amount, ol_dist_info
                 ) VALUES (?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)
-                """, orderId, request.getDistrictId(), request.getWarehouseId(), lineNumber,
+                """, orderId, request.getDistrictId(), request.getWarehouseId(), orderLineNo,
                 item.getItemId(), request.getWarehouseId(), item.getQuantity(), amount, distInfo(request.getDistrictId()));
             totalAmount = totalAmount.add(amount);
-            lineNumber++;
+            orderLineNo++;
         }
 
         long elapsedMs = elapsed(start);

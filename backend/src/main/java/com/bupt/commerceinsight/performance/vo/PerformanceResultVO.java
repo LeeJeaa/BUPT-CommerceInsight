@@ -9,28 +9,28 @@ public class PerformanceResultVO {
     private final String testName;
     private final Integer threadCount;
     private final Integer totalRequests;
-    private final Integer successRequests;
-    private final Integer failedRequests;
+    private final Integer successCount;
+    private final Integer failCount;
     private final BigDecimal avgLatencyMs;
     private final BigDecimal maxLatencyMs;
     private final BigDecimal minLatencyMs;
-    private final BigDecimal throughputQps;
+    private final BigDecimal throughput;
     private final List<PerformanceRecordVO> records;
     private final Map<String, Object> chartData;
 
-    public PerformanceResultVO(String testName, Integer threadCount, Integer totalRequests, Integer successRequests,
-                               Integer failedRequests, BigDecimal avgLatencyMs, BigDecimal maxLatencyMs,
-                               BigDecimal minLatencyMs, BigDecimal throughputQps,
+    public PerformanceResultVO(String testName, Integer threadCount, Integer totalRequests, Integer successCount,
+                               Integer failCount, BigDecimal avgLatencyMs, BigDecimal maxLatencyMs,
+                               BigDecimal minLatencyMs, BigDecimal throughput,
                                List<PerformanceRecordVO> records, Map<String, Object> chartData) {
         this.testName = testName;
         this.threadCount = threadCount;
         this.totalRequests = totalRequests;
-        this.successRequests = successRequests;
-        this.failedRequests = failedRequests;
+        this.successCount = successCount;
+        this.failCount = failCount;
         this.avgLatencyMs = avgLatencyMs;
         this.maxLatencyMs = maxLatencyMs;
         this.minLatencyMs = minLatencyMs;
-        this.throughputQps = throughputQps;
+        this.throughput = throughput;
         this.records = records;
         this.chartData = chartData;
     }
@@ -47,12 +47,12 @@ public class PerformanceResultVO {
         return totalRequests;
     }
 
-    public Integer getSuccessRequests() {
-        return successRequests;
+    public Integer getSuccessCount() {
+        return successCount;
     }
 
-    public Integer getFailedRequests() {
-        return failedRequests;
+    public Integer getFailCount() {
+        return failCount;
     }
 
     public BigDecimal getAvgLatencyMs() {
@@ -67,8 +67,8 @@ public class PerformanceResultVO {
         return minLatencyMs;
     }
 
-    public BigDecimal getThroughputQps() {
-        return throughputQps;
+    public BigDecimal getThroughput() {
+        return throughput;
     }
 
     public List<PerformanceRecordVO> getRecords() {

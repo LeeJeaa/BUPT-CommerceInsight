@@ -2,31 +2,31 @@ package com.bupt.commerceinsight.importexport.vo;
 
 public class ImportErrorVO {
 
-    private final Long lineNo;
+    private final Long lineNumber;
     private final String fieldName;
-    private final String rawValue;
-    private final String reason;
+    private final String fieldValue;
+    private final String errorReason;
 
-    public ImportErrorVO(Long lineNo, String fieldName, String rawValue, String reason) {
-        this.lineNo = lineNo;
+    public ImportErrorVO(Long lineNumber, String fieldName, String fieldValue, String errorReason) {
+        this.lineNumber = lineNumber;
         this.fieldName = fieldName;
-        this.rawValue = rawValue;
-        this.reason = reason;
+        this.fieldValue = fieldValue;
+        this.errorReason = errorReason;
     }
 
-    public Long getLineNo() {
-        return lineNo;
+    public Long getLineNumber() {
+        return lineNumber;
     }
 
     public String getFieldName() {
         return fieldName;
     }
 
-    public String getRawValue() {
-        return rawValue;
+    public String getFieldValue() {
+        return fieldValue;
     }
 
-    public String getReason() {
-        return reason;
+    public String getErrorReason() {
+        return errorReason;
     }
 }

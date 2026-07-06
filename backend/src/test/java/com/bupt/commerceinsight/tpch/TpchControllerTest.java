@@ -57,6 +57,6 @@ class TpchControllerTest {
         mockMvc.perform(get("/api/tpch/q14?month=1995-09-01")
                 .header("Authorization", "Bearer mock-token"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.records[0].promoRevenue", equalTo(16.38)));
+            .andExpect(jsonPath("$.data.records[0].promoRevenuePercent", equalTo(16.38)));
     }
 }

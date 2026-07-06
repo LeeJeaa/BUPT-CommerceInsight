@@ -6,12 +6,12 @@ public class PerformanceRecordVO {
 
     private final Integer threadCount;
     private final BigDecimal avgLatencyMs;
-    private final BigDecimal throughputQps;
+    private final BigDecimal throughput;
 
-    public PerformanceRecordVO(Integer threadCount, BigDecimal avgLatencyMs, BigDecimal throughputQps) {
+    public PerformanceRecordVO(Integer threadCount, BigDecimal avgLatencyMs, BigDecimal throughput) {
         this.threadCount = threadCount;
         this.avgLatencyMs = avgLatencyMs;
-        this.throughputQps = throughputQps;
+        this.throughput = throughput;
     }
 
     public Integer getThreadCount() {
@@ -22,7 +22,7 @@ public class PerformanceRecordVO {
         return avgLatencyMs;
     }
 
-    public BigDecimal getThroughputQps() {
-        return throughputQps;
+    public BigDecimal getThroughput() {
+        return throughput;
     }
 }

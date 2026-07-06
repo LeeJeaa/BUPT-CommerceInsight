@@ -4,20 +4,20 @@ import java.math.BigDecimal;
 
 public class Q14RecordVO {
 
-    private BigDecimal promoRevenue;
+    private BigDecimal promoRevenuePercent;
 
     public Q14RecordVO() {
     }
 
-    public Q14RecordVO(BigDecimal promoRevenue) {
-        this.promoRevenue = promoRevenue;
+    public Q14RecordVO(BigDecimal promoRevenuePercent) {
+        this.promoRevenuePercent = promoRevenuePercent;
     }
 
-    public BigDecimal getPromoRevenue() {
-        return promoRevenue;
+    public BigDecimal getPromoRevenuePercent() {
+        return promoRevenuePercent;
     }
 
-    public void setPromoRevenue(BigDecimal promoRevenue) {
-        this.promoRevenue = promoRevenue;
+    public void setPromoRevenuePercent(BigDecimal promoRevenuePercent) {
+        this.promoRevenuePercent = promoRevenuePercent;
     }
 }

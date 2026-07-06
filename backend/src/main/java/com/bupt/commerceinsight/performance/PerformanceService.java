@@ -20,7 +20,7 @@ public class PerformanceService {
         Map<String, Object> chartData = Map.of(
             "xAxis", records.stream().map(PerformanceRecordVO::getThreadCount).toList(),
             "latencySeries", records.stream().map(PerformanceRecordVO::getAvgLatencyMs).toList(),
-            "throughputSeries", records.stream().map(PerformanceRecordVO::getThroughputQps).toList()
+            "throughputSeries", records.stream().map(PerformanceRecordVO::getThroughput).toList()
         );
         return new PerformanceResultVO(
             "tpcc".equalsIgnoreCase(testType) ? "TPC-C Concurrent Transaction Test" : "TPC-H Concurrent Query Test",

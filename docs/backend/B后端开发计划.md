@@ -23,15 +23,15 @@
 4. 不主写 Vue 页面、ECharts 图表或前端 Mock JSON。
 5. 不擅自修改冻结契约文档：`docs/api/api-contract.md`、`docs/api/mock-contract.md`、`docs/database/*`、`docs/git/git协作指南.md`。
 
-## 3. 契约差异处理
+## 3. 关键字段映射
 
-| 来源 | 差异 | B 的处理 |
+| 来源 | 数据库/内部字段 | 对外 API 字段 |
 |---|---|---|
-| `api-contract.md` vs A 展示包 | Q14 API 冻结字段为 `promoRevenue`，A SQL/展示包字段为 `promoRevenuePercent` | 对外先严格按 `api-contract.md` 返回 `promoRevenue`；真实库接入时由 SQL `promo_revenue_percent` 映射到 VO |
-| `api-contract.md` vs A 展示包 | 导入错误 API 冻结为 `lineNo/rawValue/reason`，A 展示包使用 `lineNumber/fieldValue/errorReason` | 对外严格返回 `lineNo/rawValue/reason`；Repository 适配实际数据库字段 |
-| `api-contract.md` vs A 展示包 | Payment 请求冻结为 `paymentAmount`，A 示例有 `amount` | DTO 主字段为 `paymentAmount`，兼容读取 `amount`，响应仍按冻结契约 |
-| `mock-contract.md` vs A 展示包 | 性能冻结为 `successRequests/failedRequests/throughputQps`，A 展示包有 `successCount/failCount/throughput` | 对外严格返回 `successRequests/failedRequests/throughputQps` |
-| `api-contract.md` vs A SQL | Q1 SQL 有 `sumCharge/avgPrice/avgDisc`，冻结 API Q1 示例未列这些扩展字段 | Mock/接口只保证冻结字段存在；真实映射保留扩展字段不影响 C 时再考虑 |
+| Q14 | `promo_revenue_percent` | `promoRevenuePercent` |
+| 导入错误 | `line_number/field_value/error_reason` | `lineNumber/fieldValue/errorReason` |
+| 性能结果 | `success_count/fail_count/throughput` | `successCount/failCount/throughput` |
+| Payment 请求 | A 的部分联调示例使用 `amount` | 主字段为 `paymentAmount`，兼容读取 `amount` |
+| Q1 | A SQL 的 snake_case 输出别名 | `sumCharge/avgPrice/avgDisc` 等 lowerCamelCase 字段 |
 
 ## 4. 技术方案
 
@@ -87,7 +87,7 @@
 - [x] 实现 `GET /api/query/order-revenue` Mock。
 - [x] 运行接口级测试。
 - [x] 自查字段全部 lowerCamelCase，导入错误字段按 `api-contract.md`。
-- [-] 本地提交：`feat(backend): add auth user import and query mock apis`
+- [x] 本地提交：`feat(backend): add auth user import and query mock apis`
 
 ### 阶段 3：TPC-H Q1/Q5/Q12/Q14
 
@@ -100,7 +100,7 @@
 - [x] 预留 MyBatis Mapper SQL，复制 A 后端适配包 SELECT 主体。
 - [x] 运行接口级测试。
 - [x] 自查字段与 `api-contract.md`、`mock-contract.md` 对齐。
-- [-] 本地提交：`feat(tpch): add q1 q5 q12 q14 mock apis`
+- [x] 本地提交：`feat(tpch): add q1 q5 q12 q14 mock apis`
 
 ### 阶段 4：TPC-C 事务和性能接口
 
@@ -111,18 +111,18 @@
 - [x] 实现 `GET /api/performance/results` Mock。
 - [x] 运行接口级测试。
 - [x] 自查 New-Order 库存变化路径可写 `stock_change_log`，不承担 Python 压测。
-- [-] 本地提交：`feat(tpcc): add transaction and performance mock apis`
+- [x] 本地提交：`feat(tpcc): add transaction and performance mock apis`
 
 ### 阶段 5：最终自查与待审版
 
-- [ ] 运行 `mvn test`。
-- [ ] 启动后端并执行 curl 冒烟测试。
-- [ ] 检查 Git diff 未修改 A/C/D 责任文件。
-- [ ] 检查 API 字段没有 `snake_case` 外泄。
-- [ ] 检查分支为 `dev/b-backend-service`。
-- [ ] 更新 `backend/README.md`，给 C/D 测试账号、启动命令和接口示例。
-- [ ] 更新 `report/parts/B_后端接口与事务实现.md`。
-- [ ] 本地提交：`docs(backend): add backend review handoff`
+- [x] 运行 `mvn test`。
+- [x] 启动后端并执行 curl 冒烟测试。
+- [x] 检查 Git diff 未修改 A/C/D 责任文件。
+- [x] 检查 API 字段没有 `snake_case` 外泄。
+- [x] 检查分支为 `dev/b-backend-service`。
+- [x] 更新 `backend/README.md`，给 C/D 测试账号、启动命令和接口示例。
+- [x] 更新 `report/parts/B_后端接口与事务实现.md`。
+- [x] 本地提交：`fix(backend): align contracts and add review handoff`
 
 ## 6. 验证计划
 
