@@ -91,16 +91,16 @@
 
 ### 阶段 3：TPC-H Q1/Q5/Q12/Q14
 
-- [ ] 实现 TPC-H 通用 `TpchResultVO`。
-- [ ] 实现 `GET /api/tpch/q5`。
-- [ ] 实现 `GET /api/tpch/q12`。
-- [ ] 实现 `GET /api/tpch/q1`。
-- [ ] 实现 `GET /api/tpch/q14`。
-- [ ] 构造 `chartData`。
-- [ ] 预留 MyBatis Mapper SQL，复制 A 后端适配包 SELECT 主体。
-- [ ] 运行接口级测试。
-- [ ] 自查字段与 `api-contract.md`、`mock-contract.md` 对齐。
-- [ ] 本地提交：`feat(tpch): add q1 q5 q12 q14 mock apis`
+- [x] 实现 TPC-H 通用 `TpchResultVO`。
+- [x] 实现 `GET /api/tpch/q5`。
+- [x] 实现 `GET /api/tpch/q12`。
+- [x] 实现 `GET /api/tpch/q1`。
+- [x] 实现 `GET /api/tpch/q14`。
+- [x] 构造 `chartData`。
+- [x] 预留 MyBatis Mapper SQL，复制 A 后端适配包 SELECT 主体。
+- [x] 运行接口级测试。
+- [x] 自查字段与 `api-contract.md`、`mock-contract.md` 对齐。
+- [-] 本地提交：`feat(tpch): add q1 q5 q12 q14 mock apis`
 
 ### 阶段 4：TPC-C 事务和性能接口
 
