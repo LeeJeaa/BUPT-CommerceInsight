@@ -1,0 +1,45 @@
+# OS and editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs and runtime output
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.bak
+report/
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+
+# Dependency/build outputs
+node_modules/
+dist/
+build/
+target/
+out/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Local database/data directories
+postgres_data/
+pgdata/
+*.db
+*.sqlite
+*.sqlite3
+
+# Large local benchmark/import artifacts
+*.tbl
+*.csv.tmp
+*.dump
+*.sql.gz

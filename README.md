@@ -47,6 +47,7 @@ BUPT-CommerceInsight/
     V10__indexes_baseline.sql
     V11__sample_data.sql
     V12__explain_baseline.sql
+    demo_transaction_data.sql      # 可选：持久化 New-Order/Payment 演示事务
   db/                              # D：Docker、初始化、正式导入脚本
     docker-compose.yml
     init/00_run_sql_assets.sh
@@ -83,6 +84,8 @@ B 管 API 字段映射和事务服务。
 C 只依赖 API/Mock 字段，不依赖数据库字段。
 D 管 Docker、正式数据、性能实验和报告整合。
 ```
+
+TPC-C 口径冻结为课程最小实现：`stock` 不包含 `s_dist_01` 至 `s_dist_10`，New-Order 的 `order_line.ol_dist_info` 由 B 生成并写入；如需初始化库中出现已提交事务样例，可在 V11 后执行 `sql/demo_transaction_data.sql`。
 
 ## 三、技术栈
 

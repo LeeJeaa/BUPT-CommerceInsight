@@ -58,3 +58,5 @@ elapsed_ms -> elapsedMs
 | 函数 | `fn_<business_name>` | `fn_update_stock_log` |
 | 存储过程 | `sp_<business_name>` | `sp_analyze_region_revenue` |
 
+注意：PostgreSQL 中通过 `CREATE FUNCTION ... RETURNS TABLE` 实现可返回结果集的存储过程逻辑（`CREATE PROCEDURE` 无法返回结果集），本项目统一使用 `CREATE FUNCTION` 实现，命名前缀仍保持 `sp_`。B 调用时使用 `SELECT * FROM sp_xxx(...)` 语法。
+

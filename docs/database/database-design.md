@@ -60,6 +60,8 @@ stock
 
 为避免与 TPC-H 冲突，TPC-C 客户和订单使用 `tpcc_customer`、`tpcc_orders`。
 
+TPC-C 实现口径冻结为课程最小实现，只覆盖 New-Order 和 Payment 事务演示所需字段，不追求完整 BenchmarkSQL 兼容。`stock` 不包含标准 TPC-C 的 `s_dist_01` 至 `s_dist_10`，`order_line.ol_dist_info` 由 B 在 Service/Mapper 中传入固定值或按 `districtId` 生成。
+
 ## 4. 应用辅助表
 
 ### app_user
@@ -96,10 +98,10 @@ created_by
 ```text
 error_id
 task_id
-line_no
+line_number
 field_name
-raw_value
-reason
+field_value
+error_reason
 created_at
 ```
 
@@ -136,12 +138,12 @@ test_name
 test_type
 thread_count
 total_requests
-success_requests
-failed_requests
+success_count
+fail_count
 avg_latency_ms
 max_latency_ms
 min_latency_ms
-throughput_qps
+throughput
 created_at
 ```
 
@@ -154,9 +156,9 @@ item_id
 old_quantity
 new_quantity
 change_quantity
-change_reason
+change_type
 related_transaction_id
-created_at
+changed_at
 ```
 
 用途：记录 TPC-C New-Order 等事务造成的库存变化，支撑触发器演示、事务审计和报告截图。

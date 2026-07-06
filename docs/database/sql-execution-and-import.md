@@ -38,6 +38,14 @@ V12__explain_baseline.sql
 V1 -> V2 -> V3 -> V4 -> V8 -> V9 -> V10 -> 可选 V11
 ```
 
+如需持久化 TPC-C 事务样例，继续执行：
+
+```text
+sql/demo_transaction_data.sql
+```
+
+该脚本不属于默认初始化链路，避免 V11 基础样例被订单和支付结果污染。
+
 特点：
 
 ```text
@@ -95,7 +103,28 @@ git ls-files --stage db/init/00_run_sql_assets.sh
 
 如果没有 `dos2unix`，可以用编辑器把换行格式改为 LF。
 
-## 6. 系统演示导入与正式导入区别
+## 6. 重复初始化和清库
+
+`V4__add_constraints.sql` 已改为幂等脚本，同一数据库中重复执行会跳过已存在约束。D 或本地开发者需要完整重置数据时，仍优先使用 Docker volume 重建：
+
+```powershell
+docker compose -f db/docker-compose.yml down -v
+docker compose -f db/docker-compose.yml up -d
+```
+
+如果是在非 Docker PostgreSQL 中手工重建，请连接到维护库后删除并重建目标库：
+
+```sql
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE datname = 'tpc_commerce'
+  AND pid <> pg_backend_pid();
+
+DROP DATABASE IF EXISTS tpc_commerce;
+CREATE DATABASE tpc_commerce;
+```
+
+## 7. 系统演示导入与正式导入区别
 
 | 类型 | 负责人 | 入口 | 目的 |
 |---|---|---|---|
@@ -104,7 +133,7 @@ git ls-files --stage db/init/00_run_sql_assets.sh
 
 两者不能混用。Web 导入不承担 SF=1 初始化任务；COPY 导入不替代页面导入功能。
 
-## 7. 数据规模冻结
+## 8. 数据规模冻结
 
 ```text
 第 2 天：完成 SF=0.1 生成和导入验证。

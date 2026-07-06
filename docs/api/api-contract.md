@@ -40,6 +40,7 @@ Base URL：
 时间字段使用 ISO-8601 字符串或 yyyy-MM-dd HH:mm:ss，项目内保持一致。
 金额使用 number，不在接口中拼接货币单位。
 后端负责 snake_case 数据库字段到 lowerCamelCase API 字段的映射。
+TPC-H SQL 输出别名即使是 snake_case，也必须由 B 的 Mapper/ResultMap/DTO 转为 lowerCamelCase 后再返回。
 ```
 
 ## 2. 错误码
@@ -192,10 +193,10 @@ file
 
 ```json
 {
-  "lineNo": 18,
+  "lineNumber": 18,
   "fieldName": "o_totalprice",
-  "rawValue": "-1",
-  "reason": "金额不能为负数"
+  "fieldValue": "-1",
+  "errorReason": "金额不能为负数"
 }
 ```
 
@@ -264,7 +265,10 @@ file
   "sumQuantity": 37734107,
   "sumBasePrice": 56586554400.73,
   "sumDiscountedPrice": 53758257134.87,
+  "sumCharge": 55909065222.83,
   "avgQuantity": 25.52,
+  "avgPrice": 38273.13,
+  "avgDisc": 0.05,
   "countOrder": 1478493
 }
 ```
@@ -304,7 +308,7 @@ file
 
 ```json
 {
-  "promoRevenue": 16.38
+  "promoRevenuePercent": 16.38
 }
 ```
 
@@ -338,6 +342,14 @@ file
   "totalAmount": 125.5,
   "elapsedMs": 82
 }
+```
+
+后端实现说明：
+
+```text
+本项目 TPC-C 为课程最小实现，stock 表不提供 s_dist_01~s_dist_10。
+New-Order 写 order_line.ol_dist_info 时由 B 在 Service/Mapper 中生成，推荐固定为 dist-info-01 或按 districtId 生成。
+前端请求不传 olDistInfo，API 响应也不暴露 olDistInfo，除非后续新增订单明细查询接口。
 ```
 
 ### POST `/api/tpcc/payment`
@@ -378,12 +390,12 @@ file
   "testName": "TPC-H Concurrent Query Test",
   "threadCount": 8,
   "totalRequests": 80,
-  "successRequests": 80,
-  "failedRequests": 0,
+  "successCount": 80,
+  "failCount": 0,
   "avgLatencyMs": 1260.5,
   "maxLatencyMs": 2890.2,
   "minLatencyMs": 330.1,
-  "throughputQps": 6.35,
+  "throughput": 6.35,
   "records": [],
   "chartData": {
     "xAxis": [1, 2, 4, 8],
