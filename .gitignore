@@ -26,6 +26,8 @@ dist/
 build/
 target/
 out/
+backend/.mvn/apache-maven-*/
+backend/.mvn/*.tar.gz
 __pycache__/
 *.py[cod]
 .pytest_cache/

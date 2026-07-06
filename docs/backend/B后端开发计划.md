@@ -59,18 +59,18 @@
 - [x] 切换到 `dev/b-backend-service`。
 - [x] 创建 B 后端开发计划。
 - [x] 自查是否误改冻结契约。
-- [-] 本地提交：`docs(backend): add member B backend plan`
+- [x] 本地提交：`docs(backend): add member B backend plan`
 
 ### 阶段 1：后端骨架、统一响应与异常
 
-- [ ] 创建 `backend/` SpringBoot 工程。
-- [ ] 配置 Maven、Java 17、Spring Web、Validation、MyBatis、PostgreSQL JDBC。
-- [ ] 实现 `ApiResponse`、`PageResponse`、`ErrorCode`、`BusinessException`、`GlobalExceptionHandler`。
-- [ ] 实现基础鉴权拦截器和 CORS。
-- [ ] 增加健康检查接口 `/api/health` 作为后端自测入口。
-- [ ] 运行 `mvn test`。
-- [ ] 自查：只新增 B 目录和 B 文档，不改 A/C/D 目录。
-- [ ] 本地提交：`feat(backend): add spring boot base project`
+- [x] 创建 `backend/` SpringBoot 工程。
+- [x] 配置 Maven、Java 17、Spring Web、Validation、MyBatis、PostgreSQL JDBC。
+- [x] 实现 `ApiResponse`、`PageResponse`、`ErrorCode`、`BusinessException`、`GlobalExceptionHandler`。
+- [x] 实现基础鉴权拦截器和 CORS。
+- [x] 增加健康检查接口 `/api/health` 作为后端自测入口。
+- [x] 运行 `mvn test`。
+- [x] 自查：只新增 B 目录和 B 文档，不改 A/C/D 目录。
+- [-] 本地提交：`feat(backend): add spring boot base project`
 
 ### 阶段 2：认证、用户、导入导出、业务查询
 
