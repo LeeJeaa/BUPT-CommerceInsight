@@ -1,45 +1,24 @@
-# OS and editor noise
-.DS_Store
-Thumbs.db
-desktop.ini
-.idea/
-.vscode/
-*.swp
-*.swo
+# Generated TPC-H data
+data/tpch/
 
-# Logs and runtime output
-*.log
-logs/
-tmp/
-temp/
-*.tmp
-*.bak
-report/
-# Environment and local secrets
-.env
-.env.*
-!.env.example
+# Local dbgen builds and downloaded tools
+tools/tpch-dbgen/
 
-# Dependency/build outputs
-node_modules/
-dist/
-build/
-target/
-out/
+# Runtime logs and generated experiment outputs
+report/import_logs/*.log
+report/import_logs/*.txt
+report/performance/*.json
+report/performance/*.csv
+report/performance/*_samples.csv
+!report/performance/performance_mock.json
+!report/performance/performance_mock.csv
+
+# Local Python cache
 __pycache__/
-*.py[cod]
-.pytest_cache/
-.mypy_cache/
+*.pyc
 
-# Local database/data directories
-postgres_data/
-pgdata/
-*.db
-*.sqlite
-*.sqlite3
+# Docker runtime artifacts
+*.pid
 
-# Large local benchmark/import artifacts
-*.tbl
-*.csv.tmp
-*.dump
-*.sql.gz
+# Extracted local review text
+guidance_extracted.txt

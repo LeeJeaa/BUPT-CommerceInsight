@@ -1,0 +1,5 @@
+testName,scaleFactor,threadCount,totalRequests,successRequests,failedRequests,avgLatencyMs,p95LatencyMs,throughput,startedAt,endedAt
+mock_tpch_q1_sf01,0.1,1,20,20,0,94.1,126.7,10.2,2026-07-06 10:00:00,2026-07-06 10:00:02
+mock_tpch_q1_sf01,0.1,2,30,30,0,107.8,151.4,19.4,2026-07-06 10:00:00,2026-07-06 10:00:02
+mock_tpch_q1_sf01,0.1,4,50,50,0,128.4,185.2,29.6,2026-07-06 10:00:00,2026-07-06 10:00:02
+mock_tpch_q1_sf01,0.1,8,80,78,2,176.5,249.9,35.1,2026-07-06 10:00:00,2026-07-06 10:00:03
