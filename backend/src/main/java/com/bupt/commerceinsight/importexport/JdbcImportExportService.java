@@ -35,7 +35,7 @@ public class JdbcImportExportService implements ImportExportService {
     private static final Set<String> EXPORT_TABLES = Set.of(
         "region", "nation", "supplier", "part", "partsupp", "customer", "orders", "lineitem",
         "warehouse", "district", "tpcc_customer", "history", "item", "stock",
-        "tpcc_orders", "new_order", "order_line", "app_user", "import_task",
+        "tpcc_orders", "new_order", "order_line", "import_task",
         "import_error_log", "query_log", "transaction_log", "performance_result", "stock_change_log"
     );
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

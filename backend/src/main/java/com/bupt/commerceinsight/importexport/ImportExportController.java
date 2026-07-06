@@ -1,7 +1,10 @@
 package com.bupt.commerceinsight.importexport;
 
 import com.bupt.commerceinsight.common.ApiResponse;
+import com.bupt.commerceinsight.common.BusinessException;
+import com.bupt.commerceinsight.common.ErrorCode;
 import com.bupt.commerceinsight.common.PageResponse;
+import com.bupt.commerceinsight.config.AuthContext;
 import com.bupt.commerceinsight.importexport.vo.ImportErrorVO;
 import com.bupt.commerceinsight.importexport.vo.ImportTaskVO;
 import org.springframework.core.io.ByteArrayResource;
@@ -31,11 +34,13 @@ public class ImportExportController {
         @RequestParam String tableName,
         @RequestParam(required = false) MultipartFile file
     ) {
+        requireAdmin();
         return ApiResponse.success(importExportService.createImportTask(tableName, file));
     }
 
     @GetMapping("/import/tasks/{taskId}")
     public ApiResponse<ImportTaskVO> getTask(@PathVariable Long taskId) {
+        requireAdmin();
         return ApiResponse.success(importExportService.getTask(taskId));
     }
 
@@ -45,16 +50,24 @@ public class ImportExportController {
         @RequestParam(defaultValue = "1") int pageNo,
         @RequestParam(defaultValue = "20") int pageSize
     ) {
+        requireAdmin();
         return ApiResponse.success(importExportService.getErrors(taskId, pageNo, pageSize));
     }
 
     @GetMapping("/export/table/{tableName}")
     public ResponseEntity<ByteArrayResource> exportTable(@PathVariable String tableName) {
+        requireAdmin();
         ByteArrayResource resource = importExportService.exportTable(tableName);
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + tableName + ".csv\"")
             .contentType(MediaType.parseMediaType("text/csv;charset=UTF-8"))
             .contentLength(resource.contentLength())
             .body(resource);
+    }
+
+    private void requireAdmin() {
+        if (!AuthContext.requireUser().isAdmin()) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "无权限");
+        }
     }
 }

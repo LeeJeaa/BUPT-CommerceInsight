@@ -124,17 +124,52 @@
 - [x] 更新 `report/parts/B_后端接口与事务实现.md`。
 - [x] 本地提交：`fix(backend): align contracts and add review handoff`
 
+### 阶段 6：真实 PostgreSQL 通用服务适配
+
+- [x] 抽取 `UserRepository`，保留 Mock 实现并新增 JDBC 实现。
+- [x] 注册密码使用 BCrypt，`dev` profile 自动修复 V11 占位哈希并补充测试账号。
+- [x] Token Store 支持已登录用户动态 token。
+- [x] 导入导出拆分 Mock/JDBC 实现。
+- [x] `orders`、`lineitem` 系统演示导入支持校验、批量写入、错误日志和任务状态。
+- [x] 业务查询拆分 Mock/JDBC 实现。
+- [x] 性能结果拆分 Mock/JDBC 实现。
+- [x] 自查未修改 A 的 SQL、表结构或冻结契约。
+- [x] 本地提交：`feat(backend): add postgres service adapters`
+
+### 阶段 7：TPC-H 真实查询与规则补全
+
+- [x] TPC-H Service 拆分 Mock/MyBatis 实现。
+- [x] `dev` profile 执行 Q1/Q5/Q12/Q14 后写 `query_log`。
+- [x] Q1 补齐 `sumCharge/avgPrice/avgDisc` 冻结字段。
+- [x] TPC-C 事务编号改为 UUID 后缀，避免服务重启后唯一键冲突。
+- [x] 增加 profile 与事务注解结构测试。
+- [x] 增加 MyBatis 服务字段映射测试。
+- [x] 运行 22 个单元/接口/结构测试。
+- [x] 本地提交：`feat(tpch): connect postgres query services`
+
+### 阶段 8：真实库交付说明与最终待审版
+
+- [x] 导入导出接口补充管理员权限。
+- [x] 导出白名单排除 `app_user`。
+- [x] 业务查询非法日期统一返回 400。
+- [x] 更新后端运行说明、报告章节和真实库联调清单。
+- [x] 记录本地 PostgreSQL 端口不可用，不伪造 dev profile 联调结果。
+- [x] 运行最终测试和 Mock HTTP 冒烟。
+- [x] 检查提交作者、分支和责任目录。
+- [x] 本地提交：`docs(backend): finalize postgres handoff`
+
 ## 6. 验证计划
 
 1. 编译测试：`cd backend && ./mvnw test` 或 `mvn test`。
-2. 启动测试：`cd backend && mvn spring-boot:run -Dspring-boot.run.profiles=mock`。
-3. 冒烟接口：
+2. Mock 启动测试：`cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=mock`。
+3. PostgreSQL 启动测试：A/D 基线环境可用后运行 `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`。
+4. 冒烟接口：
    - `POST /api/auth/login`
    - `GET /api/users`
    - `GET /api/tpch/q5`
    - `POST /api/tpcc/new-order`
    - `GET /api/performance/results`
-4. Git 自查：
+5. Git 自查：
    - 当前分支必须是 `dev/b-backend-service`。
    - 提交作者必须是 `saymyzj <2695364042@qq.com>`。
    - 不推送远程，等待用户审核。

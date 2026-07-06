@@ -22,6 +22,13 @@ backend/
     performance/     性能结果读取接口
 ```
 
+各业务模块通过 Spring profile 保持双实现：
+
+```text
+mock：不依赖数据库，供 C 并行联调
+dev：JdbcTemplate/MyBatis 连接 PostgreSQL
+```
+
 ## 3. 统一响应与异常
 
 统一成功响应：
@@ -104,7 +111,15 @@ chartData
 explainPlan
 ```
 
-Mapper XML 已预留 A 提供的 SQL 主体，后续 `dev` profile 可切 PostgreSQL。
+Mapper XML 使用 A 提供的 SQL SELECT 主体，`dev` profile 由 `MyBatisTpchService` 执行真实 PostgreSQL 查询并写入 `query_log`。
+
+Q1 返回完整冻结字段，包括：
+
+```text
+sumCharge
+avgPrice
+avgDisc
+```
 
 ## 7. TPC-C 事务
 
@@ -132,6 +147,12 @@ SELECT set_config('app.change_type', 'new_order', true);
 ```
 
 库存扣减走 `stock` 更新，触发器可写入 `stock_change_log`。
+
+事务编号使用日期与 UUID 后缀组合，避免服务重启后重复。事务方法均配置：
+
+```text
+@Transactional(rollbackFor = Exception.class)
+```
 
 ## 8. 性能接口
 
@@ -173,12 +194,33 @@ chartData.throughputSeries
 TPC-H Q1/Q5/Q12/Q14
 TPC-C New-Order/Payment
 性能结果接口
+Mock/dev profile 隔离
+TPC-C 事务注解规则
+MyBatis TPC-H 字段映射与 query_log 写入
 ```
 
-## 10. 后续真实库联调
+当前共 23 个测试，全部通过。
+
+## 10. 系统演示导入
+
+`dev` profile 支持 `orders` 和 `lineitem` 文件：
+
+```text
+逐行读取
+程序侧字段校验
+合法行批量写入
+错误行写入 import_error_log
+任务统计写入 import_task
+```
+
+该功能只用于系统验收演示，不替代 D 的 dbgen/COPY 正式数据初始化。
+
+## 11. 真实库联调状态
 
 1. D 启动 PostgreSQL Docker。
 2. 确认 A 的 `V1 -> V2 -> V3 -> V4 -> V8 -> V9 -> V10 -> V11` 已执行。
 3. 使用 `dev` profile 启动后端。
 4. 重点验证 TPC-H Mapper、New-Order 触发器上下文、Payment 更新余额。
 5. 如 SQL 字段变化，由 A 更新 SQL/表契约，B 只改 Mapper/DTO 映射。
+
+本次待审环境未开放 `localhost:5432`，因此没有声称完成 PostgreSQL HTTP 实测。已完成 Mock HTTP 冒烟、Java 编译、单元/接口/结构测试；真实库联调按 `docs/integration/B后端真实库联调清单.md` 在 A/D 基线环境执行。

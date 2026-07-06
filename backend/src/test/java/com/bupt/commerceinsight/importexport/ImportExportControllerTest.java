@@ -50,4 +50,12 @@ class ImportExportControllerTest {
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Disposition", "attachment; filename=\"orders.csv\""));
     }
+
+    @Test
+    void importAndExportRequireAdminRole() throws Exception {
+        mockMvc.perform(get("/api/export/table/orders")
+                .header("Authorization", "Bearer mock-token-user"))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.code", equalTo(403)));
+    }
 }

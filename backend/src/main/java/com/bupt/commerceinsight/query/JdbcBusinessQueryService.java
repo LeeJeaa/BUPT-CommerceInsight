@@ -1,5 +1,7 @@
 package com.bupt.commerceinsight.query;
 
+import com.bupt.commerceinsight.common.BusinessException;
+import com.bupt.commerceinsight.common.ErrorCode;
 import com.bupt.commerceinsight.common.PageResponse;
 import com.bupt.commerceinsight.query.vo.CustomerQueryVO;
 import com.bupt.commerceinsight.query.vo.OrderRevenueVO;
@@ -69,11 +71,11 @@ public class JdbcBusinessQueryService implements BusinessQueryService {
         List<Object> args = new ArrayList<>();
         if (startDate != null && !startDate.isBlank()) {
             where.append(" AND o.o_orderdate >= ?");
-            args.add(LocalDate.parse(startDate));
+            args.add(parseDate(startDate));
         }
         if (endDate != null && !endDate.isBlank()) {
             where.append(" AND o.o_orderdate < ?");
-            args.add(LocalDate.parse(endDate));
+            args.add(parseDate(endDate));
         }
         Long total = jdbcTemplate.queryForObject("""
             SELECT COUNT(*)
@@ -108,5 +110,13 @@ public class JdbcBusinessQueryService implements BusinessQueryService {
 
     private int offset(int pageNo, int pageSize) {
         return Math.max(pageNo - 1, 0) * pageSize;
+    }
+
+    private LocalDate parseDate(String value) {
+        try {
+            return LocalDate.parse(value);
+        } catch (java.time.format.DateTimeParseException exception) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "日期格式错误，应为 yyyy-MM-dd");
+        }
     }
 }
