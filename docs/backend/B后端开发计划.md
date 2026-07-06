@@ -104,14 +104,14 @@
 
 ### 阶段 4：TPC-C 事务和性能接口
 
-- [ ] 实现 `POST /api/tpcc/new-order` Mock。
-- [ ] 实现 `POST /api/tpcc/payment` Mock。
-- [ ] 预留真实事务 Service，使用 `@Transactional(rollbackFor = Exception.class)`。
-- [ ] 在真实事务骨架中设置 `app.transaction_id` 和 `app.change_type`。
-- [ ] 实现 `GET /api/performance/results` Mock。
-- [ ] 运行接口级测试。
-- [ ] 自查 New-Order 库存变化路径可写 `stock_change_log`，不承担 Python 压测。
-- [ ] 本地提交：`feat(tpcc): add transaction and performance mock apis`
+- [x] 实现 `POST /api/tpcc/new-order` Mock。
+- [x] 实现 `POST /api/tpcc/payment` Mock。
+- [x] 预留真实事务 Service，使用 `@Transactional(rollbackFor = Exception.class)`。
+- [x] 在真实事务骨架中设置 `app.transaction_id` 和 `app.change_type`。
+- [x] 实现 `GET /api/performance/results` Mock。
+- [x] 运行接口级测试。
+- [x] 自查 New-Order 库存变化路径可写 `stock_change_log`，不承担 Python 压测。
+- [-] 本地提交：`feat(tpcc): add transaction and performance mock apis`
 
 ### 阶段 5：最终自查与待审版
 
