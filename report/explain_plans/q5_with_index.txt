@@ -1,0 +1,11 @@
+Query: TPC-H Q5
+Scale factor: TBD
+Index state: with index
+Execution time: TBD
+Scan nodes: TBD
+Join nodes: TBD
+Sort/Aggregate nodes: TBD
+Main bottleneck: TBD
+Conclusion: TBD
+
+Raw EXPLAIN ANALYZE:

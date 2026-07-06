@@ -1,27 +1,39 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "[TPC CommerceInsight] Running SQL assets from /sql"
+echo "[init] running CommerceInsight SQL assets from /sql"
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<'SQL'
-\i /sql/V1__create_tpch_tables.sql
-\i /sql/V2__create_tpcc_tables.sql
-\i /sql/V3__create_app_tables.sql
-\i /sql/V4__add_constraints.sql
-\i /sql/V8__triggers.sql
-\i /sql/V9__procedures.sql
-\i /sql/V10__indexes_baseline.sql
-SQL
+run_sql_asset() {
+  local file="$1"
+  if [[ -f "$file" ]]; then
+    echo "[init] applying $file"
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" -f "$file"
+  else
+    echo "[init] skip missing $file"
+  fi
+}
 
-if [[ "${LOAD_SAMPLE_DATA:-true}" == "true" ]]; then
-  echo "[TPC CommerceInsight] Loading development sample data"
-  psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<'SQL'
-\i /sql/V11__sample_data.sql
-SQL
+run_sql_asset /sql/V1__create_tpch_tables.sql
+run_sql_asset /sql/V2__create_tpcc_tables.sql
+run_sql_asset /sql/V3__create_app_tables.sql
+run_sql_asset /sql/V4__add_constraints.sql
+run_sql_asset /sql/V8__triggers.sql
+run_sql_asset /sql/V9__procedures.sql
+
+if [[ "${LOAD_BASELINE_INDEXES:-true}" == "true" ]]; then
+  run_sql_asset /sql/V10__indexes_baseline.sql
+else
+  echo "[init] skip V10 indexes because LOAD_BASELINE_INDEXES is not true"
+fi
+
+if [[ "${LOAD_SAMPLE_DATA:-false}" == "true" ]]; then
+  run_sql_asset /sql/V11__sample_data.sql
+else
+  echo "[init] skip V11 sample data because LOAD_SAMPLE_DATA is not true"
 fi
 
 if [[ "${RUN_BASELINE_VALIDATION:-false}" == "true" ]]; then
-  echo "[TPC CommerceInsight] Running baseline validation SQL"
+  echo "[init] running baseline validation SQL"
   psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<'SQL'
 \i /sql/V5__tpch_queries.sql
 \i /sql/V6__tpcc_transaction_sql.sql
@@ -33,7 +45,8 @@ EXECUTE tpch_q14(DATE '1995-09-01');
 SELECT * FROM sp_analyze_region_revenue('ASIA', DATE '1994-01-01', DATE '1995-01-01');
 SELECT * FROM sp_analyze_shipping_priority('MAIL', 'SHIP', DATE '1994-01-01', DATE '1995-01-01');
 SQL
+else
+  echo "[init] skip baseline validation because RUN_BASELINE_VALIDATION is not true"
 fi
 
-echo "[TPC CommerceInsight] SQL asset initialization complete"
-
+echo "[init] SQL assets completed"
