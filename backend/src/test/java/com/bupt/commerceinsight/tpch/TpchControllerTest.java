@@ -49,6 +49,9 @@ class TpchControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.records[0].returnFlag", equalTo("A")))
             .andExpect(jsonPath("$.data.records[0].lineStatus", equalTo("F")))
+            .andExpect(jsonPath("$.data.records[0].sumCharge", equalTo(5.590906522283E10)))
+            .andExpect(jsonPath("$.data.records[0].avgPrice", equalTo(38273.13)))
+            .andExpect(jsonPath("$.data.records[0].avgDisc", equalTo(0.05)))
             .andExpect(jsonPath("$.data.records[0].countOrder", equalTo(1478493)));
     }
 

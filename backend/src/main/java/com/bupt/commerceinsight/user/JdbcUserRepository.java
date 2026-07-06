@@ -3,8 +3,6 @@ package com.bupt.commerceinsight.user;
 import com.bupt.commerceinsight.common.BusinessException;
 import com.bupt.commerceinsight.common.ErrorCode;
 import jakarta.annotation.PostConstruct;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -13,8 +11,6 @@ import java.util.Optional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
@@ -54,27 +50,20 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public UserAccount register(String username, String password, String realName, String email) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        Long userId;
         try {
-            jdbcTemplate.update(connection -> {
-                PreparedStatement statement = connection.prepareStatement("""
-                    INSERT INTO app_user (username, password_hash, real_name, email, role, status)
-                    VALUES (?, ?, ?, ?, 'user', 'pending')
-                    """, Statement.RETURN_GENERATED_KEYS);
-                statement.setString(1, username);
-                statement.setString(2, passwordEncoder.encode(password));
-                statement.setString(3, realName);
-                statement.setString(4, email);
-                return statement;
-            }, keyHolder);
+            userId = jdbcTemplate.queryForObject("""
+                INSERT INTO app_user (username, password_hash, real_name, email, role, status)
+                VALUES (?, ?, ?, ?, 'user', 'pending')
+                RETURNING user_id
+                """, Long.class, username, passwordEncoder.encode(password), realName, email);
         } catch (DuplicateKeyException exception) {
             throw new BusinessException(ErrorCode.CONFLICT, "用户名已存在");
         }
-        Number key = keyHolder.getKey();
-        if (key == null) {
+        if (userId == null) {
             throw new BusinessException(ErrorCode.INTERNAL_ERROR, "创建用户失败");
         }
-        return findById(key.longValue());
+        return findById(userId);
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,7 +26,6 @@ public class JdbcTpccService implements TpccService {
 
     private static final DateTimeFormatter ID_DATE = DateTimeFormatter.BASIC_ISO_DATE;
     private final JdbcTemplate jdbcTemplate;
-    private final AtomicLong localSequence = new AtomicLong(0);
 
     public JdbcTpccService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -179,7 +178,11 @@ public class JdbcTpccService implements TpccService {
     }
 
     private String nextId(String prefix) {
-        return "%s-%s-%04d".formatted(prefix, LocalDate.now().format(ID_DATE), localSequence.incrementAndGet());
+        return "%s-%s-%s".formatted(
+            prefix,
+            LocalDate.now().format(ID_DATE),
+            UUID.randomUUID().toString().substring(0, 8)
+        );
     }
 
     private long elapsed(long start) {

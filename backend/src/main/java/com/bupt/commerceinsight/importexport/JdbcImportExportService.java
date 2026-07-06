@@ -12,7 +12,6 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -25,8 +24,6 @@ import java.util.Set;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -154,24 +151,18 @@ public class JdbcImportExportService implements ImportExportService {
     }
 
     private Long insertTask(String tableName, String fileName) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement statement = connection.prepareStatement("""
-                INSERT INTO import_task (
-                    table_name, file_name, status, total_rows, success_rows, failed_rows,
-                    started_at, created_by
-                ) VALUES (?, ?, 'running', 0, 0, 0, current_timestamp, ?)
-                """, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, tableName);
-            statement.setString(2, fileName == null ? tableName + ".tbl" : fileName);
-            statement.setLong(3, AuthContext.requireUser().userId());
-            return statement;
-        }, keyHolder);
-        Number key = keyHolder.getKey();
-        if (key == null) {
+        Long taskId = jdbcTemplate.queryForObject("""
+            INSERT INTO import_task (
+                table_name, file_name, status, total_rows, success_rows, failed_rows,
+                started_at, created_by
+            ) VALUES (?, ?, 'running', 0, 0, 0, current_timestamp, ?)
+            RETURNING task_id
+            """, Long.class, tableName, fileName == null ? tableName + ".tbl" : fileName,
+            AuthContext.requireUser().userId());
+        if (taskId == null) {
             throw new BusinessException(ErrorCode.INTERNAL_ERROR, "创建导入任务失败");
         }
-        return key.longValue();
+        return taskId;
     }
 
     private ImportSummary processFile(Long taskId, String tableName, byte[] bytes) {
