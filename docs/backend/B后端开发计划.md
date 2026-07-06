@@ -70,24 +70,24 @@
 - [x] 增加健康检查接口 `/api/health` 作为后端自测入口。
 - [x] 运行 `mvn test`。
 - [x] 自查：只新增 B 目录和 B 文档，不改 A/C/D 目录。
-- [-] 本地提交：`feat(backend): add spring boot base project`
+- [x] 本地提交：`feat(backend): add spring boot base project`
 
 ### 阶段 2：认证、用户、导入导出、业务查询
 
-- [ ] 实现 `POST /api/auth/register`。
-- [ ] 实现 `POST /api/auth/login`。
-- [ ] 实现 `GET /api/users`。
-- [ ] 实现 `PUT /api/users/{userId}/approve`。
-- [ ] 实现 `PUT /api/users/{userId}/disable`。
-- [ ] 实现 `POST /api/import/tasks` Mock。
-- [ ] 实现 `GET /api/import/tasks/{taskId}` Mock。
-- [ ] 实现 `GET /api/import/tasks/{taskId}/errors` Mock。
-- [ ] 实现 `GET /api/export/table/{tableName}` CSV 文件流 Mock。
-- [ ] 实现 `GET /api/query/customers` Mock。
-- [ ] 实现 `GET /api/query/order-revenue` Mock。
-- [ ] 运行接口级测试。
-- [ ] 自查字段全部 lowerCamelCase，导入错误字段按 `api-contract.md`。
-- [ ] 本地提交：`feat(backend): add auth user import and query mock apis`
+- [x] 实现 `POST /api/auth/register`。
+- [x] 实现 `POST /api/auth/login`。
+- [x] 实现 `GET /api/users`。
+- [x] 实现 `PUT /api/users/{userId}/approve`。
+- [x] 实现 `PUT /api/users/{userId}/disable`。
+- [x] 实现 `POST /api/import/tasks` Mock。
+- [x] 实现 `GET /api/import/tasks/{taskId}` Mock。
+- [x] 实现 `GET /api/import/tasks/{taskId}/errors` Mock。
+- [x] 实现 `GET /api/export/table/{tableName}` CSV 文件流 Mock。
+- [x] 实现 `GET /api/query/customers` Mock。
+- [x] 实现 `GET /api/query/order-revenue` Mock。
+- [x] 运行接口级测试。
+- [x] 自查字段全部 lowerCamelCase，导入错误字段按 `api-contract.md`。
+- [-] 本地提交：`feat(backend): add auth user import and query mock apis`
 
 ### 阶段 3：TPC-H Q1/Q5/Q12/Q14
 
