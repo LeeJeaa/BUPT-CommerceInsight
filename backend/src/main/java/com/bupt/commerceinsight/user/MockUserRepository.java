@@ -7,10 +7,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MockUserRepository {
+@Profile("mock")
+public class MockUserRepository implements UserRepository {
 
     private final AtomicLong idGenerator = new AtomicLong(3);
     private final List<UserAccount> users = new ArrayList<>();
@@ -21,6 +23,7 @@ public class MockUserRepository {
         users.add(new UserAccount(3L, "alice", "123456", "Alice", "alice@example.com", "user", "pending", "2026-07-06 10:10:00"));
     }
 
+    @Override
     public synchronized UserAccount register(String username, String password, String realName, String email) {
         if (findByUsername(username).isPresent()) {
             throw new BusinessException(ErrorCode.CONFLICT, "用户名已存在");
@@ -30,10 +33,12 @@ public class MockUserRepository {
         return user;
     }
 
+    @Override
     public synchronized Optional<UserAccount> findByUsername(String username) {
         return users.stream().filter(user -> user.username().equals(username)).findFirst();
     }
 
+    @Override
     public boolean matchesPassword(UserAccount user, String password) {
         if ("admin".equals(user.username()) && "123456".equals(password)) {
             return true;
@@ -41,6 +46,7 @@ public class MockUserRepository {
         return user.password().equals(password);
     }
 
+    @Override
     public synchronized List<UserAccount> search(String status, String keyword) {
         return users.stream()
             .filter(user -> status == null || status.isBlank() || user.status().equals(status))
@@ -52,6 +58,7 @@ public class MockUserRepository {
             .toList();
     }
 
+    @Override
     public synchronized UserAccount updateStatus(Long userId, String status) {
         for (int i = 0; i < users.size(); i++) {
             UserAccount user = users.get(i);

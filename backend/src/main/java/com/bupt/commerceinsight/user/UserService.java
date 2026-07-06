@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private final MockUserRepository userRepository;
+    private final UserRepository userRepository;
 
-    public UserService(MockUserRepository userRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

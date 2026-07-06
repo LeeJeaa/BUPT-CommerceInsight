@@ -6,17 +6,20 @@ import com.bupt.commerceinsight.auth.vo.LoginVO;
 import com.bupt.commerceinsight.auth.vo.RegisterVO;
 import com.bupt.commerceinsight.common.BusinessException;
 import com.bupt.commerceinsight.common.ErrorCode;
-import com.bupt.commerceinsight.user.MockUserRepository;
+import com.bupt.commerceinsight.config.AuthTokenStore;
 import com.bupt.commerceinsight.user.UserAccount;
+import com.bupt.commerceinsight.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
-    private final MockUserRepository userRepository;
+    private final UserRepository userRepository;
+    private final AuthTokenStore tokenStore;
 
-    public AuthService(MockUserRepository userRepository) {
+    public AuthService(UserRepository userRepository, AuthTokenStore tokenStore) {
         this.userRepository = userRepository;
+        this.tokenStore = tokenStore;
     }
 
     public RegisterVO register(RegisterRequest request) {
@@ -41,7 +44,7 @@ public class AuthService {
         if ("disabled".equals(user.status())) {
             throw new BusinessException(ErrorCode.FORBIDDEN, "用户已被禁用");
         }
-        String token = "admin".equals(user.role()) ? "mock-token" : "mock-token-user";
+        String token = tokenStore.issue(user);
         return new LoginVO(token, user.userId(), user.username(), user.role(), user.status());
     }
 }

@@ -10,9 +10,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
-    private final MockTokenStore tokenStore;
+    private final AuthTokenStore tokenStore;
 
-    public AuthInterceptor(MockTokenStore tokenStore) {
+    public AuthInterceptor(AuthTokenStore tokenStore) {
         this.tokenStore = tokenStore;
     }
 
