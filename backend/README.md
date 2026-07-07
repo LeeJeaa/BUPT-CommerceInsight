@@ -1,12 +1,12 @@
 # TPC CommerceInsight Backend
 
-成员 B 后端服务。当前默认使用 `mock` profile，不依赖 PostgreSQL，可直接支持成员 C 前后端联调和成员 D 编写 HTTP 压测脚本。
+成员 B 后端服务。真实联调和 D 阶段验收必须显式使用 `dev` 或 `prod` profile；仅前端独立演示时使用 `mock` profile。
 
 ## 启动
 
 ```bash
 cd backend
-./mvnw spring-boot:run
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 默认端口：
@@ -15,24 +15,26 @@ cd backend
 http://localhost:8080
 ```
 
-默认 profile：
+profile 口径：
 
 ```text
-mock
+dev/prod：连接真实 PostgreSQL，用于联调、验收和压测。
+mock：不依赖 PostgreSQL，仅用于前端独立演示。
 ```
 
-切换真实 PostgreSQL 开发库：
+Mock 演示：
 
 ```bash
 cd backend
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+./mvnw spring-boot:run -Dspring-boot.run.profiles=mock
 ```
 
-`dev` profile 使用仓库冻结的 PostgreSQL 16 连接：
+`dev`/`prod` profile 默认使用 PostgreSQL 16 本地连接，也可用环境变量覆盖：
 
 ```text
-jdbc:postgresql://localhost:5432/tpc_commerce
-tpc_admin / tpc_password
+DB_URL=jdbc:postgresql://localhost:5432/tpc_commerce
+DB_USERNAME=tpc_admin
+DB_PASSWORD=<local-password>
 ```
 
 `dev` profile 启动前，数据库必须按 A/D 文档完成初始化。开发样例环境执行顺序：
@@ -46,7 +48,8 @@ V1 -> V2 -> V3 -> V4 -> V8 -> V9 -> V10 -> V11
 ```text
 认证与用户：JdbcUserRepository + BCrypt
 系统演示导入：orders/lineitem 按行校验、批量写入、错误日志
-业务查询：客户查询、订单收入查询
+业务查询：客户查询、订单收入查询、零部件供应查询
+系统总览：Dashboard 行数和模块状态
 TPC-H：MyBatis Q1/Q5/Q12/Q14，并写 query_log
 TPC-C：JdbcTemplate New-Order/Payment Spring 事务
 性能结果：读取 performance_result
@@ -63,10 +66,10 @@ cd backend
 
 | username | password | role | status |
 |---|---|---|---|
-| `admin` | `admin123` 或 `123456` | `admin` | `approved` |
+| `admin` | `admin123` | `admin` | `approved` |
 | `user1` | `user123` | `user` | `approved` |
 
-`mock` profile 的管理员同时接受 `admin123` 和 `123456`；`dev` profile 使用 `admin123`。启动 `dev` profile 时，后端会把 V11 的 `change_me_hash` 升级为 BCrypt，并补充 `user1` 测试账号，不修改 A 的 SQL 文件。
+`mock`、`dev`、`prod` profile 的测试账号统一使用上表。启动 `dev`/`prod` profile 时，后端会把 V11 的 `change_me_hash` 升级为 BCrypt，并补充 `user1` 测试账号，不修改 A 的 SQL 文件。
 
 登录成功后使用：
 
@@ -95,6 +98,20 @@ TPC-H Q5：
 
 ```bash
 curl -s "http://localhost:8080/api/tpch/q5?regionName=ASIA&startDate=1994-01-01&endDate=1995-01-01" \
+  -H "Authorization: Bearer mock-token"
+```
+
+零部件供应查询：
+
+```bash
+curl -s "http://localhost:8080/api/query/part-supplier?keyword=Supplier&pageNo=1&pageSize=20" \
+  -H "Authorization: Bearer mock-token"
+```
+
+Dashboard：
+
+```bash
+curl -s "http://localhost:8080/api/dashboard/summary" \
   -H "Authorization: Bearer mock-token"
 ```
 

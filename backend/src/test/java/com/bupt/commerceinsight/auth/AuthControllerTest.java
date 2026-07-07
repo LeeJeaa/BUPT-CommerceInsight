@@ -25,7 +25,7 @@ class AuthControllerTest {
     void loginReturnsFrozenFields() throws Exception {
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"username\":\"admin\",\"password\":\"123456\"}"))
+                .content("{\"username\":\"admin\",\"password\":\"admin123\"}"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.code", equalTo(200)))
             .andExpect(jsonPath("$.data.token", equalTo("mock-token")))

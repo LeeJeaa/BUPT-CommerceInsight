@@ -19,7 +19,14 @@ http://localhost:5173
 
 默认使用前端 Mock，可独立演示。
 
-切换真实后端：
+切换真实后端前，后端必须显式使用 `dev` 或 `prod` profile：
+
+```powershell
+cd ..\backend
+.\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+前端切换真实接口：
 
 ```powershell
 $env:VITE_USE_MOCK="false"

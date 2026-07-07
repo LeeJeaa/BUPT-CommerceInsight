@@ -5,6 +5,7 @@ import com.bupt.commerceinsight.common.ErrorCode;
 import com.bupt.commerceinsight.common.PageResponse;
 import com.bupt.commerceinsight.query.vo.CustomerQueryVO;
 import com.bupt.commerceinsight.query.vo.OrderRevenueVO;
+import com.bupt.commerceinsight.query.vo.PartSupplierVO;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("dev")
+@Profile({"dev", "prod"})
 public class JdbcBusinessQueryService implements BusinessQueryService {
 
     private final JdbcTemplate jdbcTemplate;
@@ -102,6 +103,58 @@ public class JdbcBusinessQueryService implements BusinessQueryService {
                 resultSet.getDate("o_orderdate").toLocalDate().toString(),
                 resultSet.getString("c_name"),
                 resultSet.getBigDecimal("revenue")
+            ),
+            pageArgs.toArray()
+        );
+        return new PageResponse<>(pageNo, pageSize, total == null ? 0 : total, records);
+    }
+
+    @Override
+    public PageResponse<PartSupplierVO> partSupplier(String keyword, int pageNo, int pageSize) {
+        StringBuilder where = new StringBuilder(" WHERE 1 = 1");
+        List<Object> args = new ArrayList<>();
+        if (keyword != null && !keyword.isBlank()) {
+            where.append("""
+                 AND (
+                    CAST(p.p_partkey AS text) = ?
+                    OR p.p_name ILIKE ?
+                    OR s.s_name ILIKE ?
+                    OR TRIM(n.n_name) ILIKE ?
+                 )
+                """);
+            String likeKeyword = "%" + keyword.trim() + "%";
+            args.add(keyword.trim());
+            args.add(likeKeyword);
+            args.add(likeKeyword);
+            args.add(likeKeyword);
+        }
+
+        Long total = jdbcTemplate.queryForObject("""
+            SELECT COUNT(*)
+            FROM partsupp ps
+            JOIN part p ON p.p_partkey = ps.ps_partkey
+            JOIN supplier s ON s.s_suppkey = ps.ps_suppkey
+            JOIN nation n ON n.n_nationkey = s.s_nationkey
+            """ + where, Long.class, args.toArray());
+
+        List<Object> pageArgs = new ArrayList<>(args);
+        pageArgs.add(pageSize);
+        pageArgs.add(offset(pageNo, pageSize));
+        List<PartSupplierVO> records = jdbcTemplate.query("""
+            SELECT p.p_partkey, p.p_name, s.s_name, TRIM(n.n_name) AS nation_name,
+                   ps.ps_availqty, ps.ps_supplycost
+            FROM partsupp ps
+            JOIN part p ON p.p_partkey = ps.ps_partkey
+            JOIN supplier s ON s.s_suppkey = ps.ps_suppkey
+            JOIN nation n ON n.n_nationkey = s.s_nationkey
+            """ + where + " ORDER BY p.p_partkey, s.s_suppkey LIMIT ? OFFSET ?",
+            (resultSet, rowNum) -> new PartSupplierVO(
+                resultSet.getLong("p_partkey"),
+                resultSet.getString("p_name"),
+                resultSet.getString("s_name"),
+                resultSet.getString("nation_name"),
+                resultSet.getInt("ps_availqty"),
+                resultSet.getBigDecimal("ps_supplycost")
             ),
             pageArgs.toArray()
         );

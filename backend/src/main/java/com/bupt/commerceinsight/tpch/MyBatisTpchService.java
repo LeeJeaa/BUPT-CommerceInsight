@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("dev")
+@Profile({"dev", "prod"})
 public class MyBatisTpchService implements TpchService {
 
     private final TpchMapper tpchMapper;

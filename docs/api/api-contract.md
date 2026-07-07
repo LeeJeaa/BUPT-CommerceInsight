@@ -87,7 +87,7 @@ TPC-H SQL 输出别名即使是 snake_case，也必须由 B 的 Mapper/ResultMap
 ```json
 {
   "username": "admin",
-  "password": "123456"
+  "password": "admin123"
 }
 ```
 
@@ -101,6 +101,13 @@ TPC-H SQL 输出别名即使是 snake_case，也必须由 B 的 Mapper/ResultMap
   "role": "admin",
   "status": "approved"
 }
+```
+
+测试账号口径：
+
+```text
+管理员：admin / admin123
+普通用户：user1 / user123
 ```
 
 ### GET `/api/users`
@@ -206,6 +213,31 @@ file
 
 ## 5. 业务查询
 
+### GET `/api/dashboard/summary`
+
+响应 `data`：
+
+```json
+{
+  "tableCount": 24,
+  "databaseName": "tpc_commerce",
+  "dataScale": "1491999 rows",
+  "dockerStatus": "PostgreSQL connected",
+  "rowCounts": [
+    {
+      "tableName": "orders",
+      "rowCount": 300000
+    }
+  ],
+  "modules": [
+    {
+      "name": "TPC-H Q1/Q5/Q12/Q14",
+      "status": "ready"
+    }
+  ]
+}
+```
+
 ### GET `/api/query/customers`
 
 查询参数：`keyword`、`nationName`、`pageNo`、`pageSize`。
@@ -219,6 +251,23 @@ file
   "nationName": "CHINA",
   "accountBalance": 711.56,
   "marketSegment": "BUILDING"
+}
+```
+
+### GET `/api/query/part-supplier`
+
+查询参数：`keyword`、`pageNo`、`pageSize`。`keyword` 可匹配零件编号、零件名称、供应商名称或国家名称。
+
+`records` 字段：
+
+```json
+{
+  "partKey": 1001,
+  "partName": "Part-1001",
+  "supplierName": "Supplier#000000001",
+  "nationName": "CHINA",
+  "availQty": 8400,
+  "supplyCost": 18.2
 }
 ```
 
@@ -350,6 +399,8 @@ file
 本项目 TPC-C 为课程最小实现，stock 表不提供 s_dist_01~s_dist_10。
 New-Order 写 order_line.ol_dist_info 时由 B 在 Service/Mapper 中生成，推荐固定为 dist-info-01 或按 districtId 生成。
 前端请求不传 olDistInfo，API 响应也不暴露 olDistInfo，除非后续新增订单明细查询接口。
+成功事务写 transaction_log.status=committed。
+异常事务必须通过独立事务写 transaction_log.status=rolled_back 或 failed，保留 rollback 证据链。
 ```
 
 ### POST `/api/tpcc/payment`

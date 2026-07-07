@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-@Profile("dev")
+@Profile({"dev", "prod"})
 public class JdbcImportExportService implements ImportExportService {
 
     private static final Set<String> IMPORT_TABLES = Set.of("orders", "lineitem");

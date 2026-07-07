@@ -4,14 +4,12 @@ server:
 spring:
   application:
     name: commerce-insight-backend
-  profiles:
-    active: mock
   jackson:
     default-property-inclusion: non_null
   datasource:
-    url: jdbc:postgresql://localhost:5432/tpc_commerce
-    username: tpc_admin
-    password: tpc_password
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/tpc_commerce}
+    username: ${DB_USERNAME:tpc_admin}
+    password: ${DB_PASSWORD:tpc_password}
     driver-class-name: org.postgresql.Driver
 
 mybatis:

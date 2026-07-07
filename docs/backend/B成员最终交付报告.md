@@ -32,10 +32,11 @@ Git 标识：saymyzj <2695364042@qq.com>
 - 统一 API 响应、统一异常处理、参数校验错误返回。
 - 登录、注册、用户信息、用户状态和管理员用户列表。
 - 简单 token 鉴权、角色校验、CORS 支持。
-- Mock Repository，默认 `mock` profile 可不依赖数据库运行。
-- `dev` profile 下 PostgreSQL JDBC/MyBatis 接入。
+- Mock Repository，显式 `mock` profile 可不依赖数据库运行。
+- `dev`/`prod` profile 下 PostgreSQL JDBC/MyBatis 接入。
 - 数据导入、导出接口，包括导入错误明细和导出表白名单。
-- 业务查询接口：客户查询、订单收入查询。
+- 业务查询接口：客户查询、订单收入查询、零部件供应查询。
+- Dashboard 总览接口：真实库核心表行数和模块状态。
 - TPC-H Q1/Q5/Q12/Q14 查询接口。
 - TPC-C New-Order 和 Payment 事务接口。
 - 性能测试结果查询接口，供 D 重复拉取测试结果。
@@ -69,7 +70,7 @@ B 明确不负责：
 统一响应：
 
 - 所有接口统一返回 `ApiResponse<T>`。
-- 成功响应使用 `code=0`、`message=success`、`data=...`。
+- 成功响应使用 `code=200`、`message=success`、`data=...`。
 - 分页和列表使用文档约定的 VO 字段，不把数据库字段直接暴露给 C。
 
 统一异常：
@@ -88,16 +89,17 @@ B 明确不负责：
 
 ## 5. Mock Repository 对 C 的支持
 
-默认配置为：
+Mock 启动方式为：
 
-- `spring.profiles.active=mock`
+- `./mvnw spring-boot:run -Dspring-boot.run.profiles=mock`
 - `application-mock.yml` 排除 DataSource 和 MyBatis 自动配置。
 
 因此 C 可在无 PostgreSQL、无 Docker 的情况下启动后端联调。Mock 已覆盖：
 
 - 登录注册与用户状态。
 - 数据导入导出。
-- 客户查询和订单收入查询。
+- 客户查询、订单收入查询、零部件供应查询。
+- Dashboard 总览。
 - TPC-H Q1/Q5/Q12/Q14。
 - TPC-C New-Order 和 Payment。
 - 性能测试结果查询。
@@ -105,7 +107,7 @@ B 明确不负责：
 测试账号：
 
 - 管理员：`admin / admin123`
-- 普通用户：`user / user123`
+- 普通用户：`user1 / user123`
 
 该设计保证 C 只依赖 API JSON 字段，不依赖数据库字段。
 

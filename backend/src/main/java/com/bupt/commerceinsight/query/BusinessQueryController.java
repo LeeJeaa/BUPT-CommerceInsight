@@ -4,6 +4,7 @@ import com.bupt.commerceinsight.common.ApiResponse;
 import com.bupt.commerceinsight.common.PageResponse;
 import com.bupt.commerceinsight.query.vo.CustomerQueryVO;
 import com.bupt.commerceinsight.query.vo.OrderRevenueVO;
+import com.bupt.commerceinsight.query.vo.PartSupplierVO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,5 +38,14 @@ public class BusinessQueryController {
         @RequestParam(defaultValue = "20") int pageSize
     ) {
         return ApiResponse.success(queryService.orderRevenue(startDate, endDate, pageNo, pageSize));
+    }
+
+    @GetMapping("/part-supplier")
+    public ApiResponse<PageResponse<PartSupplierVO>> partSupplier(
+        @RequestParam(required = false) String keyword,
+        @RequestParam(defaultValue = "1") int pageNo,
+        @RequestParam(defaultValue = "20") int pageSize
+    ) {
+        return ApiResponse.success(queryService.partSupplier(keyword, pageNo, pageSize));
     }
 }

@@ -42,6 +42,8 @@ data/tpch/
 tools/tpch-dbgen/
 
 # Generated experiment outputs
+report/generated/
+report/rendered_report_qa/
 report/import_logs/*.log
 report/import_logs/*.txt
 report/performance/*.json

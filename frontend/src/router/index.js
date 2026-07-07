@@ -1,19 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import MainLayout from '../views/MainLayout.vue'
-import LoginView from '../views/LoginView.vue'
-import RegisterView from '../views/RegisterView.vue'
-import DashboardView from '../views/DashboardView.vue'
-import UsersView from '../views/UsersView.vue'
-import ImportView from '../views/ImportView.vue'
-import ExportView from '../views/ExportView.vue'
-import CustomerQueryView from '../views/CustomerQueryView.vue'
-import OrderRevenueView from '../views/OrderRevenueView.vue'
-import PartSupplierView from '../views/PartSupplierView.vue'
-import TpchView from '../views/TpchView.vue'
-import NewOrderView from '../views/NewOrderView.vue'
-import PaymentView from '../views/PaymentView.vue'
-import PerformanceView from '../views/PerformanceView.vue'
+
+const MainLayout = () => import('../views/MainLayout.vue')
+const LoginView = () => import('../views/LoginView.vue')
+const RegisterView = () => import('../views/RegisterView.vue')
+const DashboardView = () => import('../views/DashboardView.vue')
+const UsersView = () => import('../views/UsersView.vue')
+const ImportView = () => import('../views/ImportView.vue')
+const ExportView = () => import('../views/ExportView.vue')
+const CustomerQueryView = () => import('../views/CustomerQueryView.vue')
+const OrderRevenueView = () => import('../views/OrderRevenueView.vue')
+const PartSupplierView = () => import('../views/PartSupplierView.vue')
+const TpchView = () => import('../views/TpchView.vue')
+const NewOrderView = () => import('../views/NewOrderView.vue')
+const PaymentView = () => import('../views/PaymentView.vue')
+const PerformanceView = () => import('../views/PerformanceView.vue')
 
 const routes = [
   { path: '/login', component: LoginView, meta: { public: true } },

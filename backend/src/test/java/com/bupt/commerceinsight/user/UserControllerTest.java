@@ -29,6 +29,14 @@ class UserControllerTest {
     }
 
     @Test
+    void usersRejectApprovedNonAdminToken() throws Exception {
+        mockMvc.perform(get("/api/users")
+                .header("Authorization", "Bearer mock-token-user"))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.code", equalTo(403)));
+    }
+
+    @Test
     void listUsersReturnsPagedRecords() throws Exception {
         mockMvc.perform(get("/api/users?pageNo=1&pageSize=20")
                 .header("Authorization", "Bearer mock-token"))

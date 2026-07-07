@@ -39,4 +39,15 @@ class BusinessQueryControllerTest {
             .andExpect(jsonPath("$.data.records[0].orderDate", equalTo("1996-01-02")))
             .andExpect(jsonPath("$.data.records[0].revenue", equalTo(172799.49)));
     }
+
+    @Test
+    void partSupplierReturnsApiContractFields() throws Exception {
+        mockMvc.perform(get("/api/query/part-supplier?keyword=Supplier")
+                .header("Authorization", "Bearer mock-token"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.records[0].partKey", equalTo(1001)))
+            .andExpect(jsonPath("$.data.records[0].partName", equalTo("Part-1001")))
+            .andExpect(jsonPath("$.data.records[0].supplierName", equalTo("Supplier#000000001")))
+            .andExpect(jsonPath("$.data.records[0].nationName", equalTo("CHINA")));
+    }
 }

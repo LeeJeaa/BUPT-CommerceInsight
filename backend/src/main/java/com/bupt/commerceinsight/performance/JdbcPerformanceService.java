@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("dev")
+@Profile({"dev", "prod"})
 public class JdbcPerformanceService implements PerformanceService {
 
     private final JdbcTemplate jdbcTemplate;

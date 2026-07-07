@@ -27,7 +27,7 @@
     <div class="chart-grid">
       <el-card shadow="never" class="content-card">
         <template #header>核心表行数</template>
-        <el-table :data="dashboard.rowCounts" border>
+        <el-table v-loading="loading" :data="dashboard.rowCounts" border>
           <el-table-column prop="tableName" label="表名" />
           <el-table-column prop="rowCount" label="行数" />
         </el-table>
@@ -46,9 +46,26 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue'
+import { queryDashboardSummary } from '../api/dashboard'
 import MetricCard from '../components/MetricCard.vue'
 import StatusTag from '../components/StatusTag.vue'
-import { dashboardMock as dashboard } from '../mock/dashboard.mock'
+import { dashboardMock } from '../mock/dashboard.mock'
+
+const dashboard = ref(dashboardMock)
+const loading = ref(false)
+
+async function loadDashboard() {
+  loading.value = true
+  try {
+    const response = await queryDashboardSummary()
+    dashboard.value = response.data
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(loadDashboard)
 </script>
 
 <style scoped>

@@ -40,9 +40,6 @@ public class MockUserRepository implements UserRepository {
 
     @Override
     public boolean matchesPassword(UserAccount user, String password) {
-        if ("admin".equals(user.username()) && "123456".equals(password)) {
-            return true;
-        }
         return user.password().equals(password);
     }
 

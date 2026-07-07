@@ -98,17 +98,24 @@ export const orderRevenueMock = {
   }
 }
 
-export const partSupplierMock = {
-  code: 200,
-  message: 'success',
-  data: {
-    pageNo: 1,
-    pageSize: 20,
-    total: 3,
-    records: [
-      { partKey: 1001, partName: 'Part-1001', supplierName: 'Supplier#000000001', nationName: 'CHINA', availQty: 8400, supplyCost: 18.2 },
-      { partKey: 1002, partName: 'Part-1002', supplierName: 'Supplier#000000002', nationName: 'JAPAN', availQty: 6200, supplyCost: 22.4 },
-      { partKey: 1003, partName: 'Part-1003', supplierName: 'Supplier#000000003', nationName: 'INDIA', availQty: 9100, supplyCost: 16.7 }
-    ]
+const partSupplierRecords = [
+  { partKey: 1001, partName: 'Part-1001', supplierName: 'Supplier#000000001', nationName: 'CHINA', availQty: 8400, supplyCost: 18.2 },
+  { partKey: 1002, partName: 'Part-1002', supplierName: 'Supplier#000000002', nationName: 'JAPAN', availQty: 6200, supplyCost: 22.4 },
+  { partKey: 1003, partName: 'Part-1003', supplierName: 'Supplier#000000003', nationName: 'INDIA', availQty: 9100, supplyCost: 16.7 }
+]
+
+export function partSupplierMock(params = {}) {
+  const keyword = (params.keyword || '').trim().toLowerCase()
+  const records = partSupplierRecords.filter((item) => {
+    return !keyword
+      || String(item.partKey) === keyword
+      || item.partName.toLowerCase().includes(keyword)
+      || item.supplierName.toLowerCase().includes(keyword)
+      || item.nationName.toLowerCase().includes(keyword)
+  })
+  return {
+    code: 200,
+    message: 'success',
+    data: page(records, params.pageNo, params.pageSize)
   }
 }

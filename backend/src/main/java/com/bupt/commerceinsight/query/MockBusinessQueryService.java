@@ -3,6 +3,7 @@ package com.bupt.commerceinsight.query;
 import com.bupt.commerceinsight.common.PageResponse;
 import com.bupt.commerceinsight.query.vo.CustomerQueryVO;
 import com.bupt.commerceinsight.query.vo.OrderRevenueVO;
+import com.bupt.commerceinsight.query.vo.PartSupplierVO;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.context.annotation.Profile;
@@ -23,6 +24,12 @@ public class MockBusinessQueryService implements BusinessQueryService {
         new OrderRevenueVO(2L, "1996-02-14", "Customer#000000002", new BigDecimal("84532.10"))
     );
 
+    private final List<PartSupplierVO> partSuppliers = List.of(
+        new PartSupplierVO(1001L, "Part-1001", "Supplier#000000001", "CHINA", 8400, new BigDecimal("18.20")),
+        new PartSupplierVO(1002L, "Part-1002", "Supplier#000000002", "JAPAN", 6200, new BigDecimal("22.40")),
+        new PartSupplierVO(1003L, "Part-1003", "Supplier#000000003", "INDIA", 9100, new BigDecimal("16.70"))
+    );
+
     @Override
     public PageResponse<CustomerQueryVO> customers(String keyword, String nationName, int pageNo, int pageSize) {
         List<CustomerQueryVO> filtered = customers.stream()
@@ -35,6 +42,19 @@ public class MockBusinessQueryService implements BusinessQueryService {
     @Override
     public PageResponse<OrderRevenueVO> orderRevenue(String startDate, String endDate, int pageNo, int pageSize) {
         return page(orderRevenue, pageNo, pageSize);
+    }
+
+    @Override
+    public PageResponse<PartSupplierVO> partSupplier(String keyword, int pageNo, int pageSize) {
+        String normalizedKeyword = keyword == null ? "" : keyword.trim().toLowerCase();
+        List<PartSupplierVO> filtered = partSuppliers.stream()
+            .filter(row -> normalizedKeyword.isBlank()
+                || String.valueOf(row.getPartKey()).equals(normalizedKeyword)
+                || row.getPartName().toLowerCase().contains(normalizedKeyword)
+                || row.getSupplierName().toLowerCase().contains(normalizedKeyword)
+                || row.getNationName().toLowerCase().contains(normalizedKeyword))
+            .toList();
+        return page(filtered, pageNo, pageSize);
     }
 
     private <T> PageResponse<T> page(List<T> records, int pageNo, int pageSize) {

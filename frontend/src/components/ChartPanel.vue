@@ -11,8 +11,13 @@
 </template>
 
 <script setup>
-import * as echarts from 'echarts'
+import { BarChart, LineChart, PieChart } from 'echarts/charts'
+import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
+import { init, use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
+use([BarChart, LineChart, PieChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer])
 
 const props = defineProps({
   title: { type: String, required: true },
@@ -31,7 +36,7 @@ const themedOption = computed(() => ({
 function renderChart() {
   if (!chartEl.value) return
   if (!chart) {
-    chart = echarts.init(chartEl.value)
+    chart = init(chartEl.value)
   }
   chart.setOption(themedOption.value, true)
 }

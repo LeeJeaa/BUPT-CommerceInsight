@@ -1,7 +1,6 @@
 <template>
   <div class="page">
     <h2 class="page-title">零部件供应查询</h2>
-    <el-alert class="content-card" type="warning" :closable="false" title="当前为前端 Mock 演示模块；B 暂未冻结真实接口路径，联调时不阻塞主流程。" />
     <div class="toolbar">
       <el-input v-model="filters.keyword" placeholder="零部件/供应商关键词" style="width: 260px" clearable />
       <el-button type="primary" @click="load">查询</el-button>

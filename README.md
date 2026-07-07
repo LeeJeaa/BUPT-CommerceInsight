@@ -131,7 +131,31 @@ cd BUPT-CommerceInsight
 8. [docs/git/git协作指南.md](docs/git/git协作指南.md)
 9. [docs/integration/联调与验收清单.md](docs/integration/联调与验收清单.md)
 
-### 4.3 分支组成
+### 4.3 本地联调启动
+
+真实后端联调和 D 阶段验收必须显式使用 `dev` 或 `prod` profile，避免误跑 Mock：
+
+```bash
+cd backend
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+前端切到真实接口：
+
+```powershell
+cd frontend
+$env:VITE_USE_MOCK="false"
+npm.cmd run dev
+```
+
+统一测试账号：
+
+```text
+admin / admin123
+user1 / user123
+```
+
+### 4.4 分支组成
 
 | 分支 | 用途 | 合并规则 |
 |---|---|---|

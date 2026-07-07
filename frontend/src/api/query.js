@@ -10,5 +10,5 @@ export function queryOrderRevenue(params) {
 }
 
 export function queryPartSupplier(params) {
-  return mockResolve(partSupplierMock)
+  return useMock ? mockResolve(partSupplierMock(params)) : request.get('/query/part-supplier', { params })
 }

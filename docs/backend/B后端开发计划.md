@@ -37,8 +37,8 @@
 
 1. SpringBoot 3 + Java 17。
 2. MyBatis + PostgreSQL JDBC 作为真实库接入路径。
-3. 默认 `mock` profile 不依赖数据库，便于 C 联调。
-4. `dev` profile 连接 PostgreSQL 16：`jdbc:postgresql://localhost:5432/tpc_commerce`。
+3. 显式 `mock` profile 不依赖数据库，便于 C 独立演示。
+4. 真实联调必须显式使用 `dev` 或 `prod` profile，并连接 PostgreSQL 16：`jdbc:postgresql://localhost:5432/tpc_commerce`。
 5. 统一响应类型：
    - `ApiResponse<T>`
    - `PageResponse<T>`
