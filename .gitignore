@@ -7,14 +7,6 @@ desktop.ini
 *.swp
 *.swo
 
-# Logs and runtime output
-*.log
-logs/
-tmp/
-temp/
-*.tmp
-*.bak
-report/
 # Environment and local secrets
 .env
 .env.*
@@ -28,10 +20,35 @@ target/
 out/
 backend/.mvn/apache-maven-*/
 backend/.mvn/*.tar.gz
+
+# Python cache and local tooling
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .mypy_cache/
+
+# Logs and runtime output
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Generated TPC-H data
+data/tpch/
+
+# Local dbgen builds and downloaded tools
+tools/tpch-dbgen/
+
+# Generated experiment outputs
+report/import_logs/*.log
+report/import_logs/*.txt
+report/performance/*.json
+report/performance/*.csv
+report/performance/*_samples.csv
+!report/performance/performance_mock.json
+!report/performance/performance_mock.csv
 
 # Local database/data directories
 postgres_data/
@@ -45,3 +62,9 @@ pgdata/
 *.csv.tmp
 *.dump
 *.sql.gz
+
+# Docker runtime artifacts
+*.pid
+
+# Extracted local review text
+guidance_extracted.txt

@@ -1,69 +1,137 @@
-# 数据库基线环境
+# D Environment And Import Guide
 
-> 该目录由成员 A 提供初版，用于验证 `sql/` 源资产可通过 Docker PostgreSQL 初始化。正式 dbgen、COPY 和性能测试环境仍由 D 负责。
+This directory is owned by member D. It contains Docker PostgreSQL setup,
+initialization entrypoints, TPC-H data generation/import scripts, and database
+verification helpers.
 
-## 1. 文件
+## Start PostgreSQL
+
+```powershell
+cd db
+docker compose up -d
+docker compose ps
+```
+
+Default connection:
 
 ```text
-db/docker-compose.yml
-db/init/00_run_sql_assets.sh
+host: localhost
+port: 5432
+database: tpc_commerce
+user: tpc_admin
+password: tpc_password
 ```
 
-`00_run_sql_assets.sh` 只引用 `/sql/V*.sql`，不在 `db/init/` 维护第二套业务 SQL。
+Initialization switches in `db/docker-compose.yml`:
 
-## 2. 启动
+```text
+LOAD_BASELINE_INDEXES=true      # set false for no-index EXPLAIN baseline
+LOAD_SAMPLE_DATA=false          # set true for B/C local sample validation
+RUN_BASELINE_VALIDATION=false   # set true only when sample data is loaded
+```
 
-在仓库根目录执行：
+## Reset Database
 
 ```powershell
-docker compose -f db/docker-compose.yml up -d
+cd db/scripts
+.\reset-db.ps1
 ```
 
-查看状态：
+Use `-KeepData` when you want to restart containers without deleting the
+PostgreSQL volume.
+
+## SQL Asset Rule
+
+`sql/` is the only source directory for business SQL. `db/init/` only invokes
+`/sql/V*.sql` files from Docker initialization scripts.
+
+Development initialization order:
+
+```text
+V1 -> V2 -> V3 -> V4 -> V8 -> V9 -> optional V10 -> optional V11
+```
+
+Formal import order:
+
+```text
+V1 -> V2 -> V3 -> COPY TPC-H data -> V4 -> V8 -> V9 -> optional V10 -> row counts -> EXPLAIN
+```
+
+## Generate TPC-H Data
+
+Put dbgen under `tools/tpch-dbgen`, then run:
 
 ```powershell
-docker compose -f db/docker-compose.yml ps
+cd db/scripts
+.\generate-tpch.ps1 -ScaleFactor 0.1
 ```
 
-查看日志：
+Generated `.tbl` files go under `data/tpch/SF0.1` by default. Do not commit
+large generated data files.
+
+The provided course dataset under `资料/tpc-h数据(2)` already contains `*.txt`
+files generated at `dbgen -s 0.2` scale. It is suitable for
+development, import validation, and feature demos. The guide requires at least
+600M total data for performance evaluation, so final performance testing still
+needs a larger generated dataset.
+
+Inspect the provided dataset:
 
 ```powershell
-docker logs tpc-commerce-postgres
+cd db/scripts
+.\inspect-tpch-data.ps1
 ```
 
-## 3. 连接
+## Load TPC-H Data
 
-容器内连接：
+Preview COPY commands:
 
 ```powershell
-docker exec -it tpc-commerce-postgres psql -U tpc_admin -d tpc_commerce
+cd db/scripts
+.\load-tpch.ps1 -ScaleFactor 0.2 -DryRun
 ```
 
-本机安装 `psql` 时连接：
+Run import after data exists:
 
 ```powershell
-psql "postgresql://tpc_admin:tpc_password@localhost:5432/tpc_commerce"
+.\load-tpch.ps1 -ScaleFactor 0.2 -FileExtension txt
 ```
 
-## 4. 重置
+The scripts auto-detect the provided `tpc-h数据(2)` directory to avoid Windows
+PowerShell source-encoding issues with Chinese paths.
+
+Logs are written to `report/import_logs/`.
+
+## Count Rows
 
 ```powershell
-docker compose -f db/docker-compose.yml down -v
-docker compose -f db/docker-compose.yml up -d
+cd db/scripts
+.\count-tables.ps1
 ```
 
-推荐使用 `down -v` 清理 volume 后再启动，确保样例数据、COPY 数据和验证日志从干净状态开始。`V4__add_constraints.sql` 已支持重复执行，已存在的约束会自动跳过。
-
-## 5. 手动 EXPLAIN
+If running from the host with `psql` installed:
 
 ```powershell
-docker exec -it tpc-commerce-postgres psql -U tpc_admin -d tpc_commerce -f /sql/V12__explain_baseline.sql
+psql -h localhost -p 5432 -U commerce -d commerce_insight -f db/scripts/count-tables.sql
 ```
 
-## 6. 可选事务演示数据
-
-V11 只加载基础样例和回滚验证，不持久化订单事务。需要给 B/C 查看已提交 New-Order、Payment 结果时执行：
+## Verify Local Environment
 
 ```powershell
-docker exec -it tpc-commerce-postgres psql -U tpc_admin -d tpc_commerce -f /sql/demo_transaction_data.sql
+cd db/scripts
+.\verify-environment.ps1
 ```
+
+This checks Docker CLI availability, Docker daemon status, Compose config,
+required directories, LF line endings for the init script, and whether A's SQL
+assets are already present.
+
+## Smoke Check PostgreSQL
+
+```powershell
+cd db/scripts
+.\smoke-db.ps1
+```
+
+This verifies that the `tpc-commerce-postgres` container accepts SQL
+connections.
