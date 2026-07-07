@@ -1,10 +1,47 @@
+# OS and editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+
+# Dependency/build outputs
+node_modules/
+dist/
+build/
+target/
+out/
+backend/.mvn/apache-maven-*/
+backend/.mvn/*.tar.gz
+
+# Python cache and local tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Logs and runtime output
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.bak
+
 # Generated TPC-H data
 data/tpch/
 
 # Local dbgen builds and downloaded tools
 tools/tpch-dbgen/
 
-# Runtime logs and generated experiment outputs
+# Generated experiment outputs
 report/import_logs/*.log
 report/import_logs/*.txt
 report/performance/*.json
@@ -13,9 +50,18 @@ report/performance/*_samples.csv
 !report/performance/performance_mock.json
 !report/performance/performance_mock.csv
 
-# Local Python cache
-__pycache__/
-*.pyc
+# Local database/data directories
+postgres_data/
+pgdata/
+*.db
+*.sqlite
+*.sqlite3
+
+# Large local benchmark/import artifacts
+*.tbl
+*.csv.tmp
+*.dump
+*.sql.gz
 
 # Docker runtime artifacts
 *.pid
