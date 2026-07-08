@@ -1,0 +1,18 @@
+﻿{
+  "testName": "tpch_db_q14_threads4_sf02",
+  "queryName": "q14",
+  "scaleFactor": "0.2",
+  "threadCount": 4,
+  "totalRequests": 20,
+  "successCount": 20,
+  "failCount": 0,
+  "avgLatencyMs": 155.185,
+  "p95LatencyMs": 179.5,
+  "minLatencyMs": 119.563,
+  "maxLatencyMs": 179.5,
+  "throughput": 25.291,
+  "startedAt": "2026-07-08 21:38:50",
+  "endedAt": "2026-07-08 21:38:51",
+  "elapsedSeconds": 0.791
+}
+

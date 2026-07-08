@@ -1,0 +1,121 @@
+{
+  "summary": {
+    "testName": "tpch_db_q14_threads4_sf02",
+    "queryName": "q14",
+    "scaleFactor": "0.2",
+    "threadCount": 4,
+    "totalRequests": 20,
+    "successCount": 20,
+    "failCount": 0,
+    "avgLatencyMs": 155.185,
+    "p95LatencyMs": 179.5,
+    "minLatencyMs": 119.563,
+    "maxLatencyMs": 179.5,
+    "throughput": 25.291,
+    "startedAt": "2026-07-08 21:38:50",
+    "endedAt": "2026-07-08 21:38:51",
+    "elapsedSeconds": 0.791
+  },
+  "samples": [
+    {
+      "ok": true,
+      "latencyMs": 178.027,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 177.966,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 178.343,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 179.5,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 152.92,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 153.228,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 166.1,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 169.62,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 136.87,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 123.99,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 119.563,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 147.186,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 135.055,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 145.235,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 156.446,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 168.438,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 142.983,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 130.954,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 164.928,
+      "error": ""
+    },
+    {
+      "ok": true,
+      "latencyMs": 176.344,
+      "error": ""
+    }
+  ]
+}

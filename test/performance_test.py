@@ -75,8 +75,8 @@ def summarize(args: argparse.Namespace, samples: list[Sample], started_at: str, 
         "method": args.method,
         "threadCount": args.threads,
         "totalRequests": args.requests,
-        "successRequests": success_count,
-        "failedRequests": failed_count,
+        "successCount": success_count,
+        "failCount": failed_count,
         "avgLatencyMs": round(statistics.fmean(latencies), 3) if latencies else 0,
         "p95LatencyMs": round(percentile(latencies, 95), 3),
         "minLatencyMs": round(min(latencies), 3) if latencies else 0,
@@ -166,7 +166,7 @@ def main() -> int:
     summary = summarize(args, samples, started_at, ended_at, elapsed_s)
     write_outputs(Path(args.output), summary, samples)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
-    return 0 if summary["failedRequests"] == 0 else 1
+    return 0 if summary["failCount"] == 0 else 1
 
 
 if __name__ == "__main__":

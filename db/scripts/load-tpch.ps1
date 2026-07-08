@@ -17,7 +17,17 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 function Resolve-TpchDataDir {
     param([string]$InputDir)
     if ($InputDir) {
-        return Resolve-Path -ErrorAction SilentlyContinue (Join-Path $scriptDir $InputDir)
+        $candidatePath = if ([System.IO.Path]::IsPathRooted($InputDir)) {
+            $InputDir
+        }
+        else {
+            Join-Path $scriptDir $InputDir
+        }
+        $resolvedPath = Resolve-Path -ErrorAction SilentlyContinue $candidatePath
+        if ($resolvedPath) {
+            return $resolvedPath.Path
+        }
+        return $null
     }
 
     $projectRoot = Resolve-Path (Join-Path $scriptDir "../..")
@@ -30,7 +40,11 @@ function Resolve-TpchDataDir {
         return $candidate.FullName
     }
 
-    return Resolve-Path -ErrorAction SilentlyContinue (Join-Path $scriptDir "../../data/tpch/SF0.1")
+    $fallback = Resolve-Path -ErrorAction SilentlyContinue (Join-Path $scriptDir "../../data/tpch/SF0.1")
+    if ($fallback) {
+        return $fallback.Path
+    }
+    return $null
 }
 
 $resolvedDataDir = Resolve-TpchDataDir $DataDir

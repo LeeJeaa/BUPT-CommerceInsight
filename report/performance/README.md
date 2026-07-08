@@ -8,8 +8,8 @@ Recommended summary fields:
 - `scaleFactor`
 - `threadCount`
 - `totalRequests`
-- `successRequests`
-- `failedRequests`
+- `successCount`
+- `failCount`
 - `avgLatencyMs`
 - `p95LatencyMs`
 - `throughput`

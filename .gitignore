@@ -49,6 +49,14 @@ report/import_logs/*.txt
 report/performance/*.json
 report/performance/*.csv
 report/performance/*_samples.csv
+!report/import_logs/reset_db_*.log
+!report/import_logs/load_tpch_sf*.log
+!report/import_logs/verify_environment_*.txt
+!report/import_logs/smoke_db_*.txt
+!report/import_logs/row_counts_*.txt
+!report/import_logs/apply_v10_indexes_*.txt
+!report/performance/tpch_db_*.json
+!report/performance/tpch_db_*.csv
 !report/performance/performance_mock.json
 !report/performance/performance_mock.csv
 
