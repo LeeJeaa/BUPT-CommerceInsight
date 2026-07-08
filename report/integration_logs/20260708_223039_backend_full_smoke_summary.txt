@@ -1,0 +1,5 @@
+﻿backend_full_smoke=1
+total=19
+failed=0
+json=D:\git\TPC CommerceInsight_publish\report\integration_logs\20260708_223039_backend_full_smoke.json
+failed_names=

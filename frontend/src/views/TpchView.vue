@@ -11,6 +11,7 @@
       <el-tab-pane label="Q5 本地供应商收入" name="q5">
         <div class="toolbar">
           <el-select v-model="forms.q5.regionName" style="width: 160px">
+            <el-option label="AFRICA" value="AFRICA" />
             <el-option label="ASIA" value="ASIA" />
             <el-option label="EUROPE" value="EUROPE" />
           </el-select>
@@ -67,10 +68,10 @@ import ResultTable from '../components/ResultTable.vue'
 const active = ref('q5')
 const result = ref(null)
 const forms = reactive({
-  q1: { shipDate: '1998-09-01' },
-  q5: { regionName: 'ASIA', startDate: '1994-01-01', endDate: '1995-01-01' },
-  q12: { shipMode1: 'MAIL', shipMode2: 'SHIP', startDate: '1994-01-01', endDate: '1995-01-01' },
-  q14: { month: '1995-09-01' }
+  q1: { shipDate: '2020-12-31' },
+  q5: { regionName: 'AFRICA', startDate: '2020-01-01', endDate: '2021-01-01' },
+  q12: { shipMode1: 'MAIL', shipMode2: 'SHIP', startDate: '2020-01-01', endDate: '2021-01-01' },
+  q14: { month: '2020-09-01' }
 })
 
 const columnMap = {
