@@ -1,0 +1,4 @@
+curl -s -X POST http://localhost:8080/api/tpcc/payment \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer mock-token" \
+  -d @docs/api/examples/tpcc-payment.json

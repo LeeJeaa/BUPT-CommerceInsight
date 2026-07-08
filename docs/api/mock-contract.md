@@ -71,7 +71,45 @@ C 只依赖 Mock/API 字段，不读取数据库字段。
 }
 ```
 
-## 6. TPC-H Mock
+## 6. Dashboard Mock
+
+```json
+{
+  "tableCount": 24,
+  "databaseName": "tpc_commerce",
+  "dataScale": "SF=0.2 / 课程数据集",
+  "dockerStatus": "PostgreSQL 16 ready",
+  "rowCounts": [
+    {
+      "tableName": "partsupp",
+      "rowCount": 160000
+    }
+  ],
+  "modules": [
+    {
+      "name": "TPC-H Q1/Q5/Q12/Q14",
+      "status": "ready"
+    }
+  ]
+}
+```
+
+## 7. 业务查询 Mock
+
+零部件供应查询：
+
+```json
+{
+  "partKey": 1001,
+  "partName": "Part-1001",
+  "supplierName": "Supplier#000000001",
+  "nationName": "CHINA",
+  "availQty": 8400,
+  "supplyCost": 18.2
+}
+```
+
+## 8. TPC-H Mock
 
 通用结构：
 
@@ -134,7 +172,7 @@ Q12 示例：
 }
 ```
 
-## 7. TPC-C Mock
+## 9. TPC-C Mock
 
 New-Order：
 
@@ -176,7 +214,7 @@ Payment：
 }
 ```
 
-## 8. 性能 Mock
+## 10. 性能 Mock
 
 ```json
 {
