@@ -95,13 +95,15 @@ TPC-H SQL 输出别名即使是 snake_case，也必须由 B 的 Mapper/ResultMap
 
 ```json
 {
-  "token": "mock-token",
+  "token": "8ac3b5f0-9cd4-4e40-a4fa-ef37ef504d8b",
   "userId": 1,
   "username": "admin",
   "role": "admin",
   "status": "approved"
 }
 ```
+
+`dev`/`prod` 每次登录签发新的随机 token；`mock-token`、`mock-token-admin`、`mock-token-user` 仅在 `mock` profile 预置。
 
 测试账号口径：
 
@@ -161,6 +163,8 @@ tableName
 file
 ```
 
+`tableName` 仅支持 `orders`、`lineitem`。其他表返回 400；不支持 `partsupp` 导入。
+
 响应 `data`：
 
 ```json
@@ -168,10 +172,13 @@ file
   "taskId": 1001,
   "tableName": "orders",
   "fileName": "orders_sample.txt",
-  "status": "running",
-  "totalRows": 0,
-  "successRows": 0,
-  "failedRows": 0
+  "status": "success",
+  "totalRows": 1000,
+  "successRows": 990,
+  "failedRows": 10,
+  "elapsedMs": 1250,
+  "startedAt": "2026-07-06 10:00:00",
+  "endedAt": "2026-07-06 10:00:02"
 }
 ```
 
@@ -430,9 +437,30 @@ New-Order 写 order_line.ol_dist_info 时由 B 在 Service/Mapper 中生成，�
 
 ## 8. 性能结果
 
+### POST `/api/performance/results`
+
+仅管理员可调用。请求 DTO 固定为：
+
+```json
+{
+  "testName": "TPC-H Concurrent Query Test",
+  "testType": "tpch",
+  "threadCount": 8,
+  "totalRequests": 80,
+  "successCount": 80,
+  "failCount": 0,
+  "avgLatencyMs": 1260.5,
+  "maxLatencyMs": 2890.2,
+  "minLatencyMs": 330.1,
+  "throughput": 6.35
+}
+```
+
+`testType` 仅支持 `tpch`、`tpcc`；所有数值非负，`threadCount > 0`，且 `successCount + failCount = totalRequests`、`minLatencyMs <= avgLatencyMs <= maxLatencyMs`。成功写入 `performance_result` 后返回与 GET 相同的数据结构。
+
 ### GET `/api/performance/results`
 
-查询参数：`testType`。
+查询参数：`testType=tpch|tpcc`。POST 成功后可立即读取新增结果。
 
 响应 `data`：
 
@@ -455,4 +483,3 @@ New-Order 写 order_line.ol_dist_info 时由 B 在 Service/Mapper 中生成，�
   }
 }
 ```
-

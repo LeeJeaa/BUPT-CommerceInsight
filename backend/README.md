@@ -52,7 +52,7 @@ V1 -> V2 -> V3 -> V4 -> V8 -> V9 -> V10 -> V11
 系统总览：Dashboard 行数和模块状态
 TPC-H：MyBatis Q1/Q5/Q12/Q14，并写 query_log
 TPC-C：JdbcTemplate New-Order/Payment Spring 事务
-性能结果：读取 performance_result
+性能结果：管理员写入并读取 performance_result
 ```
 
 ## 测试
@@ -71,10 +71,10 @@ cd backend
 
 `mock`、`dev`、`prod` profile 的测试账号统一使用上表。启动 `dev`/`prod` profile 时，后端会把 V11 的 `change_me_hash` 升级为 BCrypt，并补充 `user1` 测试账号，不修改 A 的 SQL 文件。
 
-登录成功后使用：
+登录成功后读取响应中的 `data.token`。`dev`/`prod` 每次登录都签发随机 token；固定的 `mock-token`、`mock-token-admin`、`mock-token-user` 仅在 `mock` profile 可用。
 
 ```text
-Authorization: Bearer mock-token
+Authorization: Bearer <data.token>
 ```
 
 ## curl 示例
@@ -87,32 +87,34 @@ curl -s -X POST http://localhost:8080/api/auth/login \
   -d '{"username":"admin","password":"admin123"}'
 ```
 
+以下命令先将登录响应中的 `data.token` 保存为环境变量 `TOKEN`。
+
 用户列表：
 
 ```bash
 curl -s "http://localhost:8080/api/users?pageNo=1&pageSize=20" \
-  -H "Authorization: Bearer mock-token"
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 TPC-H Q5：
 
 ```bash
 curl -s "http://localhost:8080/api/tpch/q5?regionName=ASIA&startDate=1994-01-01&endDate=1995-01-01" \
-  -H "Authorization: Bearer mock-token"
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 零部件供应查询：
 
 ```bash
 curl -s "http://localhost:8080/api/query/part-supplier?keyword=Supplier&pageNo=1&pageSize=20" \
-  -H "Authorization: Bearer mock-token"
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 Dashboard：
 
 ```bash
 curl -s "http://localhost:8080/api/dashboard/summary" \
-  -H "Authorization: Bearer mock-token"
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 New-Order：
@@ -120,7 +122,7 @@ New-Order：
 ```bash
 curl -s -X POST http://localhost:8080/api/tpcc/new-order \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer mock-token" \
+  -H "Authorization: Bearer $TOKEN" \
   -d '{"warehouseId":1,"districtId":1,"customerId":1,"items":[{"itemId":1001,"quantity":5}]}'
 ```
 
@@ -129,7 +131,7 @@ Payment：
 ```bash
 curl -s -X POST http://localhost:8080/api/tpcc/payment \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer mock-token" \
+  -H "Authorization: Bearer $TOKEN" \
   -d '{"warehouseId":1,"districtId":1,"customerId":1,"paymentAmount":100.00}'
 ```
 
@@ -137,7 +139,7 @@ curl -s -X POST http://localhost:8080/api/tpcc/payment \
 
 ```bash
 curl -s "http://localhost:8080/api/performance/results?testType=tpch" \
-  -H "Authorization: Bearer mock-token"
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 ## 字段口径
@@ -161,7 +163,7 @@ countOrder
 
 ## 系统演示导入
 
-`dev` profile 仅接收 `orders` 和 `lineitem` 的 TPC-H 管道分隔文件或 CSV。后端完成程序侧校验、批量写入、`import_task` 状态更新和 `import_error_log` 错误记录。
+`dev`/`prod` profile 仅接收 `orders` 和 `lineitem` 的 TPC-H 管道分隔文件或 CSV，不支持 `partsupp` 导入。后端完成程序侧校验、批量写入、`import_task` 最终状态更新和 `import_error_log` 逐行错误记录；POST 响应直接包含最终 `status`、行数统计和 `elapsedMs`。
 
 导入、任务查询、错误查看和表导出仅管理员可调用。表导出使用固定白名单，不导出 `app_user` 密码摘要。
 

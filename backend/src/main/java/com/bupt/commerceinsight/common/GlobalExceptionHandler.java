@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,6 +24,7 @@ public class GlobalExceptionHandler {
         MethodArgumentNotValidException.class,
         BindException.class,
         ConstraintViolationException.class,
+        HttpMessageNotReadableException.class,
         MissingServletRequestParameterException.class,
         MethodArgumentTypeMismatchException.class
     })
