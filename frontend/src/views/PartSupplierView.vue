@@ -3,10 +3,12 @@
     <h2 class="page-title">零部件供应查询</h2>
     <div class="toolbar">
       <el-input v-model="filters.keyword" placeholder="零部件/供应商关键词" style="width: 260px" clearable />
-      <el-button type="primary" @click="load">查询</el-button>
+      <el-button type="primary" :loading="loading" @click="load">查询</el-button>
     </div>
-    <el-card shadow="never">
-      <ResultTable :rows="rows" :columns="columns" />
+    <el-alert v-if="error" class="content-card" type="error" :closable="false" :title="error" />
+    <el-card v-loading="loading" shadow="never">
+      <ResultTable v-if="rows.length" :rows="rows" :columns="columns" />
+      <el-empty v-else-if="!loading && !error" description="暂无零部件供应结果" />
     </el-card>
   </div>
 </template>
@@ -18,6 +20,8 @@ import ResultTable from '../components/ResultTable.vue'
 
 const filters = reactive({ keyword: '' })
 const rows = ref([])
+const loading = ref(false)
+const error = ref('')
 const columns = [
   { prop: 'partKey', label: '零件 Key' },
   { prop: 'partName', label: '零件名称' },
@@ -28,8 +32,17 @@ const columns = [
 ]
 
 async function load() {
-  const response = await queryPartSupplier(filters)
-  rows.value = response.data.records
+  loading.value = true
+  error.value = ''
+  try {
+    const response = await queryPartSupplier(filters)
+    rows.value = response.data.records || []
+  } catch (err) {
+    rows.value = []
+    error.value = err.response?.data?.message || err.message || '零部件供应查询失败'
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(load)

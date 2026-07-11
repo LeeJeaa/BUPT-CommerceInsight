@@ -8,10 +8,12 @@
         <el-option label="JAPAN" value="JAPAN" />
         <el-option label="INDIA" value="INDIA" />
       </el-select>
-      <el-button type="primary" @click="load">查询</el-button>
+      <el-button type="primary" :loading="loading" @click="load">查询</el-button>
     </div>
-    <el-card shadow="never">
-      <ResultTable :rows="rows" :columns="columns" />
+    <el-alert v-if="error" class="content-card" type="error" :closable="false" :title="error" />
+    <el-card v-loading="loading" shadow="never">
+      <ResultTable v-if="rows.length" :rows="rows" :columns="columns" />
+      <el-empty v-else-if="!loading && !error" description="暂无客户查询结果" />
     </el-card>
   </div>
 </template>
@@ -23,6 +25,8 @@ import ResultTable from '../components/ResultTable.vue'
 
 const filters = reactive({ keyword: '', nationName: '', pageNo: 1, pageSize: 20 })
 const rows = ref([])
+const loading = ref(false)
+const error = ref('')
 const columns = [
   { prop: 'customerKey', label: '客户 Key' },
   { prop: 'customerName', label: '客户名称', minWidth: 180 },
@@ -32,8 +36,17 @@ const columns = [
 ]
 
 async function load() {
-  const response = await queryCustomers(filters)
-  rows.value = response.data.records
+  loading.value = true
+  error.value = ''
+  try {
+    const response = await queryCustomers(filters)
+    rows.value = response.data.records || []
+  } catch (err) {
+    rows.value = []
+    error.value = err.response?.data?.message || err.message || '客户查询失败'
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(load)

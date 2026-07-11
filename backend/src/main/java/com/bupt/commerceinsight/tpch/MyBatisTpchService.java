@@ -75,10 +75,15 @@ public class MyBatisTpchService implements TpchService {
     public TpchResultVO<Q14RecordVO> q14(LocalDate month) {
         long start = System.currentTimeMillis();
         List<Q14RecordVO> records = tpchMapper.q14(month);
-        BigDecimal promoRevenuePercent = records.isEmpty()
-            || records.get(0).getPromoRevenuePercent() == null
+        Q14RecordVO firstRecord = records.isEmpty() ? null : records.get(0);
+        BigDecimal promoRevenuePercent = firstRecord == null
+            || firstRecord.getPromoRevenuePercent() == null
             ? BigDecimal.ZERO
-            : records.get(0).getPromoRevenuePercent();
+            : firstRecord.getPromoRevenuePercent();
+        List<Q14RecordVO> normalizedRecords = firstRecord == null
+            || firstRecord.getPromoRevenuePercent() == null
+            ? List.of(new Q14RecordVO(promoRevenuePercent))
+            : records;
         Map<String, Object> chartData = Map.of(
             "gauge", promoRevenuePercent,
             "pieData", List.of(
@@ -88,7 +93,7 @@ public class MyBatisTpchService implements TpchService {
         );
         return result(
             "TPC-H Q14 促销效果查询", "q14", "month=" + month,
-            start, records, chartData
+            start, normalizedRecords, chartData
         );
     }
 

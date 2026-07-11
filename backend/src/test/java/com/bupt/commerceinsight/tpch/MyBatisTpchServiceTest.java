@@ -10,6 +10,7 @@ import com.bupt.commerceinsight.tpch.vo.Q12RecordVO;
 import com.bupt.commerceinsight.tpch.vo.Q14RecordVO;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class MyBatisTpchServiceTest {
             new BigDecimal("95"), new BigDecimal("101"),
             new BigDecimal("5"), new BigDecimal("50"), new BigDecimal("0.05"), 2L
         );
-        StubTpchMapper mapper = new StubTpchMapper(List.of(row));
+        StubTpchMapper mapper = new StubTpchMapper(List.of(row), List.of());
         RecordingJdbcTemplate jdbcTemplate = new RecordingJdbcTemplate();
         MyBatisTpchService service = new MyBatisTpchService(mapper, jdbcTemplate);
         AuthContext.set(new CurrentUser(1L, "admin", "admin", "approved"));
@@ -45,6 +46,22 @@ class MyBatisTpchServiceTest {
         assertThat(jdbcTemplate.lastArgs).contains("q1", 1L);
     }
 
+    @Test
+    void q14NormalizesNullAggregateRowToZeroPercent() {
+        StubTpchMapper mapper = new StubTpchMapper(List.of(), Collections.singletonList(null));
+        RecordingJdbcTemplate jdbcTemplate = new RecordingJdbcTemplate();
+        MyBatisTpchService service = new MyBatisTpchService(mapper, jdbcTemplate);
+        AuthContext.set(new CurrentUser(1L, "admin", "admin", "approved"));
+
+        var result = service.q14(LocalDate.of(2020, 9, 1));
+
+        assertThat(result.getRecords()).hasSize(1);
+        assertThat(result.getRecords().get(0).getPromoRevenuePercent()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(result.getChartData()).containsEntry("gauge", BigDecimal.ZERO);
+        assertThat(jdbcTemplate.lastSql).contains("INSERT INTO query_log");
+        assertThat(jdbcTemplate.lastArgs).contains("q14", 1L);
+    }
+
     private static final class RecordingJdbcTemplate extends JdbcTemplate {
 
         private String lastSql;
@@ -58,7 +75,7 @@ class MyBatisTpchServiceTest {
         }
     }
 
-    private record StubTpchMapper(List<Q1RecordVO> q1Rows) implements TpchMapper {
+    private record StubTpchMapper(List<Q1RecordVO> q1Rows, List<Q14RecordVO> q14Rows) implements TpchMapper {
 
         @Override
         public List<Q1RecordVO> q1(LocalDate shipDate) {
@@ -79,7 +96,7 @@ class MyBatisTpchServiceTest {
 
         @Override
         public List<Q14RecordVO> q14(LocalDate month) {
-            return List.of();
+            return q14Rows;
         }
     }
 }

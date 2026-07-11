@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <h2 class="page-title">TPC-H 查询分析</h2>
-    <el-tabs v-model="active" type="border-card" @tab-change="run">
+    <el-tabs v-model="active" v-loading="loading" type="border-card" @tab-change="run">
       <el-tab-pane label="Q1 定价汇总" name="q1">
         <div class="toolbar">
           <el-date-picker v-model="forms.q1.shipDate" value-format="YYYY-MM-DD" type="date" placeholder="shipDate" />
@@ -37,13 +37,19 @@
       </el-tab-pane>
     </el-tabs>
 
-    <div v-if="result" class="metric-grid page-section">
+    <el-alert v-if="error" class="content-card page-section" type="error" :closable="false" :title="error" />
+
+    <el-card v-if="empty" shadow="never" class="content-card page-section">
+      <el-empty description="暂无查询结果" />
+    </el-card>
+
+    <div v-if="result && !empty" class="metric-grid page-section">
       <MetricCard label="查询名称" :value="result.queryName" icon="trend" />
       <MetricCard label="耗时(ms)" :value="result.elapsedMs" icon="timer" />
       <MetricCard label="返回行数" :value="result.rowCount" icon="dashboard" />
     </div>
 
-    <div v-if="result" class="chart-grid">
+    <div v-if="result && !empty" class="chart-grid">
       <el-card shadow="never">
         <template #header>查询结果</template>
         <ResultTable :rows="result.records" :columns="columns" />
@@ -51,7 +57,7 @@
       <ChartPanel :title="`${active.toUpperCase()} 图表`" :option="chartOption" />
     </div>
 
-    <el-card v-if="result?.explainPlan" class="content-card" shadow="never">
+    <el-card v-if="result?.explainPlan && !empty" class="content-card" shadow="never">
       <template #header>EXPLAIN 计划摘要</template>
       <pre>{{ result.explainPlan }}</pre>
     </el-card>
@@ -67,6 +73,8 @@ import ResultTable from '../components/ResultTable.vue'
 
 const active = ref('q5')
 const result = ref(null)
+const loading = ref(false)
+const error = ref('')
 const forms = reactive({
   q1: { shipDate: '2020-12-31' },
   q5: { regionName: 'AFRICA', startDate: '2020-01-01', endDate: '2021-01-01' },
@@ -98,6 +106,7 @@ const columnMap = {
 }
 
 const columns = computed(() => columnMap[active.value])
+const empty = computed(() => !loading.value && !error.value && result.value && !result.value.records?.length)
 
 const chartOption = computed(() => {
   if (!result.value) return {}
@@ -130,8 +139,17 @@ const chartOption = computed(() => {
 
 async function run() {
   const runners = { q1: runQ1, q5: runQ5, q12: runQ12, q14: runQ14 }
-  const response = await runners[active.value](forms[active.value])
-  result.value = response.data
+  loading.value = true
+  error.value = ''
+  result.value = null
+  try {
+    const response = await runners[active.value](forms[active.value])
+    result.value = response.data
+  } catch (err) {
+    error.value = err.response?.data?.message || err.message || 'TPC-H 查询失败'
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(run)
