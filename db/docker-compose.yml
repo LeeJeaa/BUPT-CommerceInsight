@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: tpc-commerce-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tpc_commerce
+      POSTGRES_USER: tpc_admin
+      POSTGRES_PASSWORD: tpc_password
+      TZ: Asia/Shanghai
+      LOAD_BASELINE_INDEXES: "${LOAD_BASELINE_INDEXES:-true}"
+      LOAD_SAMPLE_DATA: "${LOAD_SAMPLE_DATA:-false}"
+      RUN_BASELINE_VALIDATION: "${RUN_BASELINE_VALIDATION:-false}"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../sql:/sql:ro
+      - ./init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tpc_admin -d tpc_commerce"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

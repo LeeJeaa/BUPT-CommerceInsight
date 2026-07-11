@@ -64,14 +64,52 @@ C 只依赖 Mock/API 字段，不读取数据库字段。
 
 ```json
 {
-  "lineNo": 18,
+  "lineNumber": 18,
   "fieldName": "o_totalprice",
-  "rawValue": "-1",
-  "reason": "金额不能为负数"
+  "fieldValue": "-1",
+  "errorReason": "金额不能为负数"
 }
 ```
 
-## 6. TPC-H Mock
+## 6. Dashboard Mock
+
+```json
+{
+  "tableCount": 24,
+  "databaseName": "tpc_commerce",
+  "dataScale": "SF=0.2 / 课程数据集",
+  "dockerStatus": "PostgreSQL 16 ready",
+  "rowCounts": [
+    {
+      "tableName": "partsupp",
+      "rowCount": 160000
+    }
+  ],
+  "modules": [
+    {
+      "name": "TPC-H Q1/Q5/Q12/Q14",
+      "status": "ready"
+    }
+  ]
+}
+```
+
+## 7. 业务查询 Mock
+
+零部件供应查询：
+
+```json
+{
+  "partKey": 1001,
+  "partName": "Part-1001",
+  "supplierName": "Supplier#000000001",
+  "nationName": "CHINA",
+  "availQty": 8400,
+  "supplyCost": 18.2
+}
+```
+
+## 8. TPC-H Mock
 
 通用结构：
 
@@ -134,7 +172,7 @@ Q12 示例：
 }
 ```
 
-## 7. TPC-C Mock
+## 9. TPC-C Mock
 
 New-Order：
 
@@ -170,35 +208,35 @@ Payment：
   "oldQuantity": 100,
   "newQuantity": 95,
   "changeQuantity": -5,
-  "changeReason": "new_order",
+  "changeType": "new_order",
   "relatedTransactionId": "NO-20260706-0001",
-  "createdAt": "2026-07-06 10:00:00"
+  "changedAt": "2026-07-06 10:00:00"
 }
 ```
 
-## 8. 性能 Mock
+## 10. 性能 Mock
 
 ```json
 {
   "testName": "TPC-H Concurrent Query Test",
   "threadCount": 8,
   "totalRequests": 80,
-  "successRequests": 80,
-  "failedRequests": 0,
+  "successCount": 80,
+  "failCount": 0,
   "avgLatencyMs": 1260.5,
   "maxLatencyMs": 2890.2,
   "minLatencyMs": 330.1,
-  "throughputQps": 6.35,
+  "throughput": 6.35,
   "records": [
     {
       "threadCount": 1,
       "avgLatencyMs": 410.2,
-      "throughputQps": 2.43
+      "throughput": 2.43
     },
     {
       "threadCount": 2,
       "avgLatencyMs": 590.8,
-      "throughputQps": 3.38
+      "throughput": 3.38
     }
   ],
   "chartData": {

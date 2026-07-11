@@ -1,0 +1,2 @@
+curl -s "http://localhost:8080/api/tpch/q5?regionName=ASIA&startDate=1994-01-01&endDate=1995-01-01" \
+  -H "Authorization: Bearer $TOKEN"

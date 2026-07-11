@@ -1,0 +1,24 @@
+{
+  "screenshots": [
+    "D:\\git\\TPC CommerceInsight_publish\\report\\screenshots\\20260708_2231_integration_full_01_dashboard.png",
+    "D:\\git\\TPC CommerceInsight_publish\\report\\screenshots\\20260708_2231_integration_full_02_users.png",
+    "D:\\git\\TPC CommerceInsight_publish\\report\\screenshots\\20260708_2231_integration_full_03_query_customers.png",
+    "D:\\git\\TPC CommerceInsight_publish\\report\\screenshots\\20260708_2231_integration_full_04_query_order_revenue.png",
+    "D:\\git\\TPC CommerceInsight_publish\\report\\screenshots\\20260708_2231_integration_full_05_query_part_supplier.png",
+    "D:\\git\\TPC CommerceInsight_publish\\report\\screenshots\\20260708_2231_integration_full_06_tpch_q5.png",
+    "D:\\git\\TPC CommerceInsight_publish\\report\\screenshots\\20260708_2231_integration_full_07_tpcc_new_order.png",
+    "D:\\git\\TPC CommerceInsight_publish\\report\\screenshots\\20260708_2231_integration_full_08_tpcc_payment.png",
+    "D:\\git\\TPC CommerceInsight_publish\\report\\screenshots\\20260708_2231_integration_full_09_import_errors.png",
+    "D:\\git\\TPC CommerceInsight_publish\\report\\screenshots\\20260708_2231_integration_full_10_export.png",
+    "D:\\git\\TPC CommerceInsight_publish\\report\\screenshots\\20260708_2231_integration_full_11_performance.png"
+  ],
+  "apiCount": 36,
+  "failedApi": [],
+  "pageErrors": [
+    "console: Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "downloadInfo": {
+    "suggestedFilename": "orders.csv",
+    "savedAs": "D:\\git\\TPC CommerceInsight_publish\\report\\integration_logs\\20260708_2231_frontend_export_orders.csv"
+  }
+}

@@ -1,0 +1,2 @@
+testName,queryName,scaleFactor,threadCount,totalRequests,successCount,failCount,avgLatencyMs,p95LatencyMs,minLatencyMs,maxLatencyMs,throughput,startedAt,endedAt,elapsedSeconds
+tpch_db_q12_threads4_sf02,q12,0.2,4,20,20,0,193.668,218.938,171.319,218.938,20.163,2026-07-08 21:38:49,2026-07-08 21:38:50,0.992

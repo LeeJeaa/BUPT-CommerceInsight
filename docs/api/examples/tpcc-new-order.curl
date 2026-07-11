@@ -1,0 +1,4 @@
+curl -s -X POST http://localhost:8080/api/tpcc/new-order \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d @docs/api/examples/tpcc-new-order.json

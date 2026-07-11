@@ -1,0 +1,18 @@
+﻿{
+  "testName": "tpch_db_q5_threads4_sf02",
+  "queryName": "q5",
+  "scaleFactor": "0.2",
+  "threadCount": 4,
+  "totalRequests": 20,
+  "successCount": 20,
+  "failCount": 0,
+  "avgLatencyMs": 226.257,
+  "p95LatencyMs": 244.073,
+  "minLatencyMs": 206.102,
+  "maxLatencyMs": 244.073,
+  "throughput": 17.453,
+  "startedAt": "2026-07-08 21:38:47",
+  "endedAt": "2026-07-08 21:38:49",
+  "elapsedSeconds": 1.146
+}
+

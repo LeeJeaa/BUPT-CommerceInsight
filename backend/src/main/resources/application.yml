@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: commerce-insight-backend
+  jackson:
+    default-property-inclusion: non_null
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/tpc_commerce}
+    username: ${DB_USERNAME:tpc_admin}
+    password: ${DB_PASSWORD:tpc_password}
+    driver-class-name: org.postgresql.Driver
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com.bupt.commerceinsight: INFO
