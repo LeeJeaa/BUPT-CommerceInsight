@@ -97,6 +97,6 @@ B 当前分支保持以下状态：
 - 已按组长要求合入 `origin/develop` 并解决 `.gitignore` 冲突。
 - 未主动修改 D 的 `db/`、`test/`、`report/performance/` 业务内容。
 - B 后端 API 字段以冻结契约为准。
-- B 提供 `docs/backend/B成员最终交付报告.md` 作为本分支审核依据。
+- B 提供 `docs/docs-B/B成员最终交付报告.md` 作为本分支审核依据。
 
 本声明作为 PR 审核备注，不等同于 B 对 D 范围字段和文档问题的修复承诺。

@@ -194,7 +194,7 @@ Mock 启动方式为：
 
 仍需 A/集成环境最终确认：
 
-- 在完整 PostgreSQL 基线环境中执行 `docs/integration/B后端真实库联调清单.md`。
+- 在完整 PostgreSQL 基线环境中执行 `docs/docs-B/B后端真实库联调清单.md`。
 - 确认 `stock_change_log` 触发器在真实库中按 New-Order 库存变更写入。
 - 确认 `query_log`、`import_task`、`import_error_log`、`performance_result` 表均已执行到位。
 
@@ -264,14 +264,14 @@ D 可重复调用接口获取后端保存的性能结果。B 不主写 Python �
 未完成但已明确说明的事项：
 
 - 当前本机没有确认可用的 PostgreSQL 基线库，因此真实库 HTTP 联调需在 A/D 提供的基线环境中按清单执行。
-- `origin/develop` 已包含 D 的远程交付；B 已按组长要求解决阻塞 PR 的 `.gitignore` 冲突，D 范围字段和文档风险详见 `docs/backend/B关于D远程交付问题声明.md`。
+- `origin/develop` 已包含 D 的远程交付；B 已按组长要求解决阻塞 PR 的 `.gitignore` 冲突，D 范围字段和文档风险详见 `docs/docs-B/B关于D远程交付问题声明.md`。
 
 ## 14. 提交与审核建议
 
 建议审核顺序：
 
 1. 先审核 B 后端代码是否符合 API 契约和分工边界。
-2. 再按 `docs/integration/B后端真实库联调清单.md` 在真实 PostgreSQL 环境中验收。
+2. 再按 `docs/docs-B/B后端真实库联调清单.md` 在真实 PostgreSQL 环境中验收。
 3. 最后由组长或对应责任人处理 D 远程交付中的字段不一致和过期文档问题。
 
 本报告对应 B 分支交付，不代表 B 已处理或认可 D 范围业务文件中的问题。

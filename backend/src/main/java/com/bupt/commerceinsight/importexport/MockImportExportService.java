@@ -1,11 +1,14 @@
 package com.bupt.commerceinsight.importexport;
 
+import com.bupt.commerceinsight.common.BusinessException;
+import com.bupt.commerceinsight.common.ErrorCode;
 import com.bupt.commerceinsight.common.PageResponse;
 import com.bupt.commerceinsight.importexport.vo.ImportErrorVO;
 import com.bupt.commerceinsight.importexport.vo.ImportTaskVO;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.context.annotation.Profile;
@@ -17,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Profile("mock")
 public class MockImportExportService implements ImportExportService {
 
+    private static final Set<String> IMPORT_TABLES = Set.of("orders", "lineitem");
+
     private final AtomicLong taskIdGenerator = new AtomicLong(1000);
     private final Map<Long, ImportTaskVO> tasks = new ConcurrentHashMap<>();
     private final List<ImportErrorVO> mockErrors = List.of(
@@ -26,9 +31,18 @@ public class MockImportExportService implements ImportExportService {
 
     @Override
     public ImportTaskVO createImportTask(String tableName, MultipartFile file) {
+        if (!IMPORT_TABLES.contains(tableName)) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "系统演示导入仅支持 orders 和 lineitem");
+        }
+        if (file == null || file.isEmpty()) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "请选择导入文件");
+        }
         long taskId = taskIdGenerator.incrementAndGet();
-        String fileName = file == null || file.isEmpty() ? tableName + "_sample.txt" : file.getOriginalFilename();
-        ImportTaskVO task = new ImportTaskVO(taskId, tableName, fileName, "running", 0L, 0L, 0L, null, null, null);
+        String fileName = file.getOriginalFilename();
+        ImportTaskVO task = new ImportTaskVO(
+            taskId, tableName, fileName, "success", 1L, 1L, 0L, 10L,
+            "2026-07-06 10:00:00", "2026-07-06 10:00:00"
+        );
         tasks.put(taskId, task);
         return task;
     }
