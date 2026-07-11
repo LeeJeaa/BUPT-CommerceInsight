@@ -34,6 +34,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Profile({"dev", "prod"})
 public class JdbcImportExportService implements ImportExportService {
 
+    private static final String REQUIRED_FIELD_EMPTY = "required_field_empty";
+    private static final String INVALID_NUMERIC = "invalid_numeric";
+    private static final String INVALID_DATE = "invalid_date";
+    private static final String FIELD_OUT_OF_RANGE = "field_out_of_range";
+    private static final String FOREIGN_KEY_NOT_FOUND = "foreign_key_not_found";
+    private static final String PRIMARY_KEY_CONFLICT = "primary_key_conflict";
     private static final Set<String> IMPORT_TABLES = Set.of("orders", "lineitem");
     private static final Set<String> EXPORT_TABLES = Set.of(
         "region", "nation", "supplier", "part", "partsupp", "customer", "orders", "lineitem",
@@ -67,10 +73,10 @@ public class JdbcImportExportService implements ImportExportService {
                 WHERE task_id = ?
                 """, summary.totalRows(), summary.successRows(), summary.failedRows(), taskId);
         } catch (IOException exception) {
-            markFailedWithError(taskId, "读取导入文件失败");
+            markFailedWithError(taskId);
             throw new BusinessException(ErrorCode.BAD_REQUEST, "读取导入文件失败");
         } catch (RuntimeException exception) {
-            markFailedWithError(taskId, rootMessage(exception));
+            markFailedWithError(taskId);
             throw exception;
         }
         return getTask(taskId);
@@ -211,7 +217,7 @@ public class JdbcImportExportService implements ImportExportService {
     ) {
         String[] fields = split(line);
         if (fields.length != 9) {
-            errors.add(new ImportErrorRow(lineNumber, "row", line, "字段数量必须为9"));
+            errors.add(new ImportErrorRow(lineNumber, "row", line, REQUIRED_FIELD_EMPTY));
             return;
         }
         try {
@@ -223,25 +229,25 @@ public class JdbcImportExportService implements ImportExportService {
             int shipPriority = Integer.parseInt(fields[7]);
             int errorCount = errors.size();
             if (orderKey <= 0) {
-                errors.add(new ImportErrorRow(lineNumber, "o_orderkey", fields[0], "订单主键必须大于0"));
+                errors.add(new ImportErrorRow(lineNumber, "o_orderkey", fields[0], FIELD_OUT_OF_RANGE));
             }
             if (customerKey <= 0) {
-                errors.add(new ImportErrorRow(lineNumber, "o_custkey", fields[1], "客户主键必须大于0"));
+                errors.add(new ImportErrorRow(lineNumber, "o_custkey", fields[1], FIELD_OUT_OF_RANGE));
             }
             if (!Set.of("O", "F", "P").contains(orderStatus)) {
-                errors.add(new ImportErrorRow(lineNumber, "o_orderstatus", orderStatus, "订单状态非法"));
+                errors.add(new ImportErrorRow(lineNumber, "o_orderstatus", orderStatus, FIELD_OUT_OF_RANGE));
             }
             if (totalPrice.signum() < 0) {
-                errors.add(new ImportErrorRow(lineNumber, "o_totalprice", fields[3], "金额不能为负数"));
+                errors.add(new ImportErrorRow(lineNumber, "o_totalprice", fields[3], FIELD_OUT_OF_RANGE));
             }
             if (fields[5].isBlank()) {
-                errors.add(new ImportErrorRow(lineNumber, "o_orderpriority", fields[5], "订单优先级不能为空"));
+                errors.add(new ImportErrorRow(lineNumber, "o_orderpriority", fields[5], REQUIRED_FIELD_EMPTY));
             }
             if (fields[6].isBlank()) {
-                errors.add(new ImportErrorRow(lineNumber, "o_clerk", fields[6], "经办人不能为空"));
+                errors.add(new ImportErrorRow(lineNumber, "o_clerk", fields[6], REQUIRED_FIELD_EMPTY));
             }
             if (shipPriority < 0) {
-                errors.add(new ImportErrorRow(lineNumber, "o_shippriority", fields[7], "发运优先级不能为负数"));
+                errors.add(new ImportErrorRow(lineNumber, "o_shippriority", fields[7], FIELD_OUT_OF_RANGE));
             }
             if (errors.size() != errorCount) {
                 return;
@@ -251,9 +257,9 @@ public class JdbcImportExportService implements ImportExportService {
                 fields[5], fields[6], shipPriority, fields[8]
             ));
         } catch (NumberFormatException exception) {
-            errors.add(new ImportErrorRow(lineNumber, "numeric", line, "数值格式错误"));
+            errors.add(new ImportErrorRow(lineNumber, "numeric", line, INVALID_NUMERIC));
         } catch (DateTimeParseException exception) {
-            errors.add(new ImportErrorRow(lineNumber, "o_orderdate", fields[4], "日期格式错误"));
+            errors.add(new ImportErrorRow(lineNumber, "o_orderdate", fields[4], INVALID_DATE));
         }
     }
 
@@ -262,7 +268,7 @@ public class JdbcImportExportService implements ImportExportService {
     ) {
         String[] fields = split(line);
         if (fields.length != 16) {
-            errors.add(new ImportErrorRow(lineNumber, "row", line, "字段数量必须为16"));
+            errors.add(new ImportErrorRow(lineNumber, "row", line, REQUIRED_FIELD_EMPTY));
             return;
         }
         try {
@@ -279,37 +285,37 @@ public class JdbcImportExportService implements ImportExportService {
             LocalDate receiptDate = LocalDate.parse(fields[12]);
             int errorCount = errors.size();
             if (orderKey <= 0 || partKey <= 0 || supplierKey <= 0) {
-                errors.add(new ImportErrorRow(lineNumber, "foreign_key", fields[0] + "," + fields[1] + "," + fields[2], "外键值必须大于0"));
+                errors.add(new ImportErrorRow(lineNumber, "foreign_key", fields[0] + "," + fields[1] + "," + fields[2], FIELD_OUT_OF_RANGE));
             }
             if (itemLineNumber <= 0) {
-                errors.add(new ImportErrorRow(lineNumber, "l_linenumber", fields[3], "行号必须大于0"));
+                errors.add(new ImportErrorRow(lineNumber, "l_linenumber", fields[3], FIELD_OUT_OF_RANGE));
             }
             if (quantity.signum() <= 0) {
-                errors.add(new ImportErrorRow(lineNumber, "l_quantity", fields[4], "数量必须大于0"));
+                errors.add(new ImportErrorRow(lineNumber, "l_quantity", fields[4], FIELD_OUT_OF_RANGE));
             }
             if (extendedPrice.signum() < 0) {
-                errors.add(new ImportErrorRow(lineNumber, "l_extendedprice", fields[5], "金额不能为负数"));
+                errors.add(new ImportErrorRow(lineNumber, "l_extendedprice", fields[5], FIELD_OUT_OF_RANGE));
             }
             if (discount.signum() < 0 || discount.compareTo(BigDecimal.ONE) > 0) {
-                errors.add(new ImportErrorRow(lineNumber, "l_discount", fields[6], "折扣范围错误"));
+                errors.add(new ImportErrorRow(lineNumber, "l_discount", fields[6], FIELD_OUT_OF_RANGE));
             }
             if (tax.signum() < 0 || tax.compareTo(BigDecimal.ONE) > 0) {
-                errors.add(new ImportErrorRow(lineNumber, "l_tax", fields[7], "税率范围错误"));
+                errors.add(new ImportErrorRow(lineNumber, "l_tax", fields[7], FIELD_OUT_OF_RANGE));
             }
             if (!Set.of("R", "A", "N").contains(fields[8])) {
-                errors.add(new ImportErrorRow(lineNumber, "l_returnflag", fields[8], "退货标志非法"));
+                errors.add(new ImportErrorRow(lineNumber, "l_returnflag", fields[8], FIELD_OUT_OF_RANGE));
             }
             if (!Set.of("O", "F").contains(fields[9])) {
-                errors.add(new ImportErrorRow(lineNumber, "l_linestatus", fields[9], "明细状态非法"));
+                errors.add(new ImportErrorRow(lineNumber, "l_linestatus", fields[9], FIELD_OUT_OF_RANGE));
             }
             if (receiptDate.isBefore(shipDate)) {
-                errors.add(new ImportErrorRow(lineNumber, "l_receiptdate", fields[12], "收货日期不能早于发货日期"));
+                errors.add(new ImportErrorRow(lineNumber, "l_receiptdate", fields[12], FIELD_OUT_OF_RANGE));
             }
             if (receiptDate.isBefore(commitDate)) {
-                errors.add(new ImportErrorRow(lineNumber, "l_receiptdate", fields[12], "收货日期不能早于承诺日期"));
+                errors.add(new ImportErrorRow(lineNumber, "l_receiptdate", fields[12], FIELD_OUT_OF_RANGE));
             }
             if (fields[13].isBlank() || fields[14].isBlank()) {
-                errors.add(new ImportErrorRow(lineNumber, "shipping", fields[13] + "," + fields[14], "发运指示和方式不能为空"));
+                errors.add(new ImportErrorRow(lineNumber, "shipping", fields[13] + "," + fields[14], REQUIRED_FIELD_EMPTY));
             }
             if (errors.size() != errorCount) {
                 return;
@@ -320,9 +326,9 @@ public class JdbcImportExportService implements ImportExportService {
                 fields[13], fields[14], fields[15]
             ));
         } catch (NumberFormatException exception) {
-            errors.add(new ImportErrorRow(lineNumber, "numeric", line, "数值格式错误"));
+            errors.add(new ImportErrorRow(lineNumber, "numeric", line, INVALID_NUMERIC));
         } catch (DateTimeParseException exception) {
-            errors.add(new ImportErrorRow(lineNumber, "l_shipdate", fields[10], "发货日期格式错误"));
+            errors.add(new ImportErrorRow(lineNumber, "l_shipdate", fields[10], INVALID_DATE));
         }
     }
 
@@ -331,9 +337,9 @@ public class JdbcImportExportService implements ImportExportService {
         Set<Long> fileKeys = new HashSet<>();
         for (OrderRow row : rows) {
             if (!fileKeys.add(row.orderKey()) || exists("orders", "o_orderkey", row.orderKey())) {
-                errors.add(new ImportErrorRow(row.sourceLine(), "o_orderkey", String.valueOf(row.orderKey()), "订单主键重复"));
+                errors.add(new ImportErrorRow(row.sourceLine(), "o_orderkey", String.valueOf(row.orderKey()), PRIMARY_KEY_CONFLICT));
             } else if (!exists("customer", "c_custkey", row.customerKey())) {
-                errors.add(new ImportErrorRow(row.sourceLine(), "o_custkey", String.valueOf(row.customerKey()), "客户不存在"));
+                errors.add(new ImportErrorRow(row.sourceLine(), "o_custkey", String.valueOf(row.customerKey()), FOREIGN_KEY_NOT_FOUND));
             } else {
                 validRows.add(row);
             }
@@ -347,15 +353,15 @@ public class JdbcImportExportService implements ImportExportService {
         for (LineItemRow row : rows) {
             String key = row.orderKey() + ":" + row.lineNumber();
             if (!fileKeys.add(key) || lineItemExists(row.orderKey(), row.lineNumber())) {
-                errors.add(new ImportErrorRow(row.sourceLine(), "l_orderkey,l_linenumber", key, "明细主键重复"));
+                errors.add(new ImportErrorRow(row.sourceLine(), "l_orderkey,l_linenumber", key, PRIMARY_KEY_CONFLICT));
             } else if (!exists("orders", "o_orderkey", row.orderKey())) {
-                errors.add(new ImportErrorRow(row.sourceLine(), "l_orderkey", String.valueOf(row.orderKey()), "订单不存在"));
+                errors.add(new ImportErrorRow(row.sourceLine(), "l_orderkey", String.valueOf(row.orderKey()), FOREIGN_KEY_NOT_FOUND));
             } else if (!exists("part", "p_partkey", row.partKey())) {
-                errors.add(new ImportErrorRow(row.sourceLine(), "l_partkey", String.valueOf(row.partKey()), "零件不存在"));
+                errors.add(new ImportErrorRow(row.sourceLine(), "l_partkey", String.valueOf(row.partKey()), FOREIGN_KEY_NOT_FOUND));
             } else if (!exists("supplier", "s_suppkey", row.supplierKey())) {
-                errors.add(new ImportErrorRow(row.sourceLine(), "l_suppkey", String.valueOf(row.supplierKey()), "供应商不存在"));
+                errors.add(new ImportErrorRow(row.sourceLine(), "l_suppkey", String.valueOf(row.supplierKey()), FOREIGN_KEY_NOT_FOUND));
             } else if (!partSupplierExists(row.partKey(), row.supplierKey())) {
-                errors.add(new ImportErrorRow(row.sourceLine(), "l_partkey,l_suppkey", row.partKey() + ":" + row.supplierKey(), "零件与供应商关系不存在"));
+                errors.add(new ImportErrorRow(row.sourceLine(), "l_partkey,l_suppkey", row.partKey() + ":" + row.supplierKey(), FOREIGN_KEY_NOT_FOUND));
             } else {
                 validRows.add(row);
             }
@@ -386,7 +392,7 @@ public class JdbcImportExportService implements ImportExportService {
                 statement.setString(9, row.comment());
             });
             return countResults(rows, counts, errors, row -> new ImportErrorRow(
-                row.sourceLine(), "o_orderkey", String.valueOf(row.orderKey()), "订单主键重复"
+                row.sourceLine(), "o_orderkey", String.valueOf(row.orderKey()), PRIMARY_KEY_CONFLICT
             ));
         } catch (DataAccessException exception) {
             return insertOrdersIndividually(rows, errors);
@@ -425,7 +431,7 @@ public class JdbcImportExportService implements ImportExportService {
             });
             return countResults(rows, counts, errors, row -> new ImportErrorRow(
                 row.sourceLine(), "l_orderkey,l_linenumber",
-                row.orderKey() + ":" + row.lineNumber(), "明细主键重复"
+                row.orderKey() + ":" + row.lineNumber(), PRIMARY_KEY_CONFLICT
             ));
         } catch (DataAccessException exception) {
             return insertLineItemsIndividually(rows, errors);
@@ -447,13 +453,13 @@ public class JdbcImportExportService implements ImportExportService {
                     row.shipPriority(), row.comment());
                 if (updated == 0) {
                     errors.add(new ImportErrorRow(
-                        row.sourceLine(), "o_orderkey", String.valueOf(row.orderKey()), "订单主键重复"
+                        row.sourceLine(), "o_orderkey", String.valueOf(row.orderKey()), PRIMARY_KEY_CONFLICT
                     ));
                 } else {
                     success++;
                 }
             } catch (DataAccessException exception) {
-                errors.add(databaseError(row.sourceLine(), String.valueOf(row.orderKey()), exception));
+                errors.add(databaseError(row.sourceLine(), String.valueOf(row.orderKey())));
             }
         }
         return success;
@@ -477,15 +483,13 @@ public class JdbcImportExportService implements ImportExportService {
                 if (updated == 0) {
                     errors.add(new ImportErrorRow(
                         row.sourceLine(), "l_orderkey,l_linenumber",
-                        row.orderKey() + ":" + row.lineNumber(), "明细主键重复"
+                        row.orderKey() + ":" + row.lineNumber(), PRIMARY_KEY_CONFLICT
                     ));
                 } else {
                     success++;
                 }
             } catch (DataAccessException exception) {
-                errors.add(databaseError(
-                    row.sourceLine(), row.orderKey() + ":" + row.lineNumber(), exception
-                ));
+                errors.add(databaseError(row.sourceLine(), row.orderKey() + ":" + row.lineNumber()));
             }
         }
         return success;
@@ -506,7 +510,7 @@ public class JdbcImportExportService implements ImportExportService {
                     errors.add(conflictError.apply(row));
                 } else if (count == Statement.EXECUTE_FAILED) {
                     errors.add(new ImportErrorRow(
-                        sourceLine(row), "database", String.valueOf(row), "数据库未写入该行"
+                        sourceLine(row), "database", String.valueOf(row), FIELD_OUT_OF_RANGE
                     ));
                 } else {
                     success++;
@@ -563,13 +567,13 @@ public class JdbcImportExportService implements ImportExportService {
             });
     }
 
-    private void markFailedWithError(Long taskId, String message) {
+    private void markFailedWithError(Long taskId) {
         try {
             jdbcTemplate.update("""
                 INSERT INTO import_error_log (
                     task_id, line_number, field_name, field_value, error_reason
                 ) VALUES (?, 1, 'database', NULL, ?)
-                """, taskId, "导入运行失败：" + message);
+                """, taskId, FIELD_OUT_OF_RANGE);
         } catch (RuntimeException ignored) {
             // The task update is still attempted when the database rejected the error detail itself.
         }
@@ -580,17 +584,8 @@ public class JdbcImportExportService implements ImportExportService {
             """, taskId);
     }
 
-    private ImportErrorRow databaseError(long lineNumber, String value, RuntimeException exception) {
-        return new ImportErrorRow(lineNumber, "database", value, "数据库写入失败：" + rootMessage(exception));
-    }
-
-    private String rootMessage(Throwable throwable) {
-        Throwable current = throwable;
-        while (current.getCause() != null) {
-            current = current.getCause();
-        }
-        String message = current.getMessage();
-        return message == null || message.isBlank() ? current.getClass().getSimpleName() : message;
+    private ImportErrorRow databaseError(long lineNumber, String value) {
+        return new ImportErrorRow(lineNumber, "database", value, FIELD_OUT_OF_RANGE);
     }
 
     private String[] split(String line) {

@@ -89,7 +89,9 @@ async function load() {
     result.value = response.data
   } catch (err) {
     result.value = null
-    error.value = err.response?.data?.message || err.message || '性能结果加载失败'
+    if (err.response?.status !== 404) {
+      error.value = err.response?.data?.message || err.message || '性能结果加载失败'
+    }
   } finally {
     loading.value = false
   }

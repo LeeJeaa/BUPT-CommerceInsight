@@ -172,7 +172,9 @@ class DevPostgresIntegrationTest {
         mockMvc.perform(get("/api/import/tasks/{taskId}/errors", orderTaskId.longValue())
                 .header("Authorization", "Bearer " + adminToken))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.total").value(2));
+            .andExpect(jsonPath("$.data.total").value(2))
+            .andExpect(jsonPath("$.data.records[0].errorReason").value("primary_key_conflict"))
+            .andExpect(jsonPath("$.data.records[1].errorReason").value("foreign_key_not_found"));
 
         Map<String, Object> lineContext = jdbcTemplate.queryForMap("""
             SELECT o.o_orderkey, ps.ps_partkey, ps.ps_suppkey,
@@ -218,7 +220,9 @@ class DevPostgresIntegrationTest {
         mockMvc.perform(get("/api/import/tasks/{taskId}/errors", lineItemTaskId.longValue())
                 .header("Authorization", "Bearer " + adminToken))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.total").value(2));
+            .andExpect(jsonPath("$.data.total").value(2))
+            .andExpect(jsonPath("$.data.records[0].errorReason").value("primary_key_conflict"))
+            .andExpect(jsonPath("$.data.records[1].errorReason").value("foreign_key_not_found"));
     }
 
     @Test

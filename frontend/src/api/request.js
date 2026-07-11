@@ -37,7 +37,8 @@ service.interceptors.response.use(
     const status = error.response?.status
     const message = error.response?.data?.message || error.message || '网络请求失败'
     const handled = handleAuthError(status, message)
-    if (!handled) {
+    const silent = error.config?.silentStatuses?.includes(Number(status))
+    if (!handled && !silent) {
       ElMessage.error(message)
     }
     return Promise.reject(error)
