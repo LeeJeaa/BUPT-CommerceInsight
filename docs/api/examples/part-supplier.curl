@@ -1,2 +1,0 @@
-curl -s "http://localhost:8080/api/query/part-supplier?keyword=Supplier&pageNo=1&pageSize=20" \
-  -H "Authorization: Bearer $TOKEN"

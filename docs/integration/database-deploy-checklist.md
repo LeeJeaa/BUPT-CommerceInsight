@@ -23,18 +23,8 @@ db/init/00_run_sql_assets.sh 有可执行权限。
 ```text
 V1/V2/V3/V4/V8/V9/V10 可按顺序执行。
 可选 V11 样例数据可导入。
-可选 sql/demo_transaction_data.sql 可在 V11 后提交一笔 New-Order 和一笔 Payment 样例。
 B 后端可连接。
 ```
-
-重复初始化要求：
-
-```powershell
-docker compose -f db/docker-compose.yml down -v
-docker compose -f db/docker-compose.yml up -d
-```
-
-说明：V4 已支持重复执行，已存在的约束会自动跳过。排错或正式初始化前仍建议清理 Docker volume 或重建数据库，避免旧数据影响行数统计和验证结果。
 
 ## 4. 正式导入检查
 

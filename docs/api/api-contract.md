@@ -40,7 +40,6 @@ Base URL：
 时间字段使用 ISO-8601 字符串或 yyyy-MM-dd HH:mm:ss，项目内保持一致。
 金额使用 number，不在接口中拼接货币单位。
 后端负责 snake_case 数据库字段到 lowerCamelCase API 字段的映射。
-TPC-H SQL 输出别名即使是 snake_case，也必须由 B 的 Mapper/ResultMap/DTO 转为 lowerCamelCase 后再返回。
 ```
 
 ## 2. 错误码
@@ -87,7 +86,7 @@ TPC-H SQL 输出别名即使是 snake_case，也必须由 B 的 Mapper/ResultMap
 ```json
 {
   "username": "admin",
-  "password": "admin123"
+  "password": "123456"
 }
 ```
 
@@ -95,21 +94,12 @@ TPC-H SQL 输出别名即使是 snake_case，也必须由 B 的 Mapper/ResultMap
 
 ```json
 {
-  "token": "8ac3b5f0-9cd4-4e40-a4fa-ef37ef504d8b",
+  "token": "mock-token",
   "userId": 1,
   "username": "admin",
   "role": "admin",
   "status": "approved"
 }
-```
-
-`dev`/`prod` 每次登录签发新的随机 token；`mock-token`、`mock-token-admin`、`mock-token-user` 仅在 `mock` profile 预置。
-
-测试账号口径：
-
-```text
-管理员：admin / admin123
-普通用户：user1 / user123
 ```
 
 ### GET `/api/users`
@@ -163,8 +153,6 @@ tableName
 file
 ```
 
-`tableName` 仅支持 `orders`、`lineitem`。其他表返回 400；不支持 `partsupp` 导入。
-
 响应 `data`：
 
 ```json
@@ -172,13 +160,10 @@ file
   "taskId": 1001,
   "tableName": "orders",
   "fileName": "orders_sample.txt",
-  "status": "success",
-  "totalRows": 1000,
-  "successRows": 990,
-  "failedRows": 10,
-  "elapsedMs": 1250,
-  "startedAt": "2026-07-06 10:00:00",
-  "endedAt": "2026-07-06 10:00:02"
+  "status": "running",
+  "totalRows": 0,
+  "successRows": 0,
+  "failedRows": 0
 }
 ```
 
@@ -207,10 +192,10 @@ file
 
 ```json
 {
-  "lineNumber": 18,
+  "lineNo": 18,
   "fieldName": "o_totalprice",
-  "fieldValue": "-1",
-  "errorReason": "金额不能为负数"
+  "rawValue": "-1",
+  "reason": "金额不能为负数"
 }
 ```
 
@@ -219,31 +204,6 @@ file
 返回 CSV/Excel 文件流。
 
 ## 5. 业务查询
-
-### GET `/api/dashboard/summary`
-
-响应 `data`：
-
-```json
-{
-  "tableCount": 24,
-  "databaseName": "tpc_commerce",
-  "dataScale": "1491999 rows",
-  "dockerStatus": "PostgreSQL connected",
-  "rowCounts": [
-    {
-      "tableName": "orders",
-      "rowCount": 300000
-    }
-  ],
-  "modules": [
-    {
-      "name": "TPC-H Q1/Q5/Q12/Q14",
-      "status": "ready"
-    }
-  ]
-}
-```
 
 ### GET `/api/query/customers`
 
@@ -258,23 +218,6 @@ file
   "nationName": "CHINA",
   "accountBalance": 711.56,
   "marketSegment": "BUILDING"
-}
-```
-
-### GET `/api/query/part-supplier`
-
-查询参数：`keyword`、`pageNo`、`pageSize`。`keyword` 可匹配零件编号、零件名称、供应商名称或国家名称。
-
-`records` 字段：
-
-```json
-{
-  "partKey": 1001,
-  "partName": "Part-1001",
-  "supplierName": "Supplier#000000001",
-  "nationName": "CHINA",
-  "availQty": 8400,
-  "supplyCost": 18.2
 }
 ```
 
@@ -321,10 +264,7 @@ file
   "sumQuantity": 37734107,
   "sumBasePrice": 56586554400.73,
   "sumDiscountedPrice": 53758257134.87,
-  "sumCharge": 55909065222.83,
   "avgQuantity": 25.52,
-  "avgPrice": 38273.13,
-  "avgDisc": 0.05,
   "countOrder": 1478493
 }
 ```
@@ -364,7 +304,7 @@ file
 
 ```json
 {
-  "promoRevenuePercent": 16.38
+  "promoRevenue": 16.38
 }
 ```
 
@@ -400,16 +340,6 @@ file
 }
 ```
 
-后端实现说明：
-
-```text
-本项目 TPC-C 为课程最小实现，stock 表不提供 s_dist_01~s_dist_10。
-New-Order 写 order_line.ol_dist_info 时由 B 在 Service/Mapper 中生成，推荐固定为 dist-info-01 或按 districtId 生成。
-前端请求不传 olDistInfo，API 响应也不暴露 olDistInfo，除非后续新增订单明细查询接口。
-成功事务写 transaction_log.status=committed。
-异常事务必须通过独立事务写 transaction_log.status=rolled_back 或 failed，保留 rollback 证据链。
-```
-
 ### POST `/api/tpcc/payment`
 
 请求：
@@ -437,30 +367,9 @@ New-Order 写 order_line.ol_dist_info 时由 B 在 Service/Mapper 中生成，�
 
 ## 8. 性能结果
 
-### POST `/api/performance/results`
-
-仅管理员可调用。请求 DTO 固定为：
-
-```json
-{
-  "testName": "TPC-H Concurrent Query Test",
-  "testType": "tpch",
-  "threadCount": 8,
-  "totalRequests": 80,
-  "successCount": 80,
-  "failCount": 0,
-  "avgLatencyMs": 1260.5,
-  "maxLatencyMs": 2890.2,
-  "minLatencyMs": 330.1,
-  "throughput": 6.35
-}
-```
-
-`testType` 仅支持 `tpch`、`tpcc`；所有数值非负，`threadCount > 0`，且 `successCount + failCount = totalRequests`、`minLatencyMs <= avgLatencyMs <= maxLatencyMs`。成功写入 `performance_result` 后返回与 GET 相同的数据结构。
-
 ### GET `/api/performance/results`
 
-查询参数：`testType=tpch|tpcc`。POST 成功后可立即读取新增结果。
+查询参数：`testType`。
 
 响应 `data`：
 
@@ -469,12 +378,12 @@ New-Order 写 order_line.ol_dist_info 时由 B 在 Service/Mapper 中生成，�
   "testName": "TPC-H Concurrent Query Test",
   "threadCount": 8,
   "totalRequests": 80,
-  "successCount": 80,
-  "failCount": 0,
+  "successRequests": 80,
+  "failedRequests": 0,
   "avgLatencyMs": 1260.5,
   "maxLatencyMs": 2890.2,
   "minLatencyMs": 330.1,
-  "throughput": 6.35,
+  "throughputQps": 6.35,
   "records": [],
   "chartData": {
     "xAxis": [1, 2, 4, 8],
@@ -483,3 +392,4 @@ New-Order 写 order_line.ol_dist_info 时由 B 在 Service/Mapper 中生成，�
   }
 }
 ```
+
