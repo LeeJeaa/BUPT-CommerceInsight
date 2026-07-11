@@ -1,6 +1,8 @@
 -- TPC CommerceInsight
 -- V7: import cleaning rules and SQL templates for system demo import.
--- This is for B's web/API import flow, not D's formal dbgen + COPY import.
+-- Web demo import contract: only orders and lineitem are supported tables.
+-- partsupp belongs only to the formal dbgen + COPY import and is intentionally
+-- not exposed through a PREPARE statement in this Web/API demo contract.
 
 -- Error log template used when one input row fails validation.
 PREPARE import_log_error(bigint, bigint, varchar, text, text) AS
@@ -57,19 +59,6 @@ INSERT INTO lineitem (
     $9, $10, $11, $12, $13, $14, $15, $16
 );
 
--- Clean partsupp insert template.
--- Required checks before calling:
--- ps_partkey: non-null integer and should reference part
--- ps_suppkey: non-null integer and should reference supplier
--- ps_availqty: integer and >= 0
--- ps_supplycost: numeric and >= 0
-PREPARE import_insert_partsupp(integer, integer, integer, numeric, varchar) AS
-INSERT INTO partsupp (
-    ps_partkey, ps_suppkey, ps_availqty, ps_supplycost, ps_comment
-) VALUES (
-    $1, $2, $3, $4, $5
-);
-
 -- ON CONFLICT DO NOTHING: skip duplicate primary keys and let B detect 0 affected rows.
 -- B should insert the skipped row into import_error_log with reason 'primary_key_conflict'.
 PREPARE import_insert_orders_skip_dup(
@@ -97,14 +86,6 @@ INSERT INTO lineitem (
 )
 ON CONFLICT (l_orderkey, l_linenumber) DO NOTHING;
 
-PREPARE import_insert_partsupp_skip_dup(integer, integer, integer, numeric, varchar) AS
-INSERT INTO partsupp (
-    ps_partkey, ps_suppkey, ps_availqty, ps_supplycost, ps_comment
-) VALUES (
-    $1, $2, $3, $4, $5
-)
-ON CONFLICT (ps_partkey, ps_suppkey) DO NOTHING;
-
 -- ON CONFLICT DO UPDATE (upsert): overwrite existing row with incoming data.
 -- Use only if the task explicitly allows re-import to overwrite.
 PREPARE import_upsert_orders(
@@ -126,24 +107,12 @@ ON CONFLICT (o_orderkey) DO UPDATE SET
     o_shippriority  = EXCLUDED.o_shippriority,
     o_comment       = EXCLUDED.o_comment;
 
-PREPARE import_upsert_partsupp(integer, integer, integer, numeric, varchar) AS
-INSERT INTO partsupp (
-    ps_partkey, ps_suppkey, ps_availqty, ps_supplycost, ps_comment
-) VALUES (
-    $1, $2, $3, $4, $5
-)
-ON CONFLICT (ps_partkey, ps_suppkey) DO UPDATE SET
-    ps_availqty   = EXCLUDED.ps_availqty,
-    ps_supplycost = EXCLUDED.ps_supplycost,
-    ps_comment    = EXCLUDED.ps_comment;
-
--- Suggested error reasons for B to keep stable:
+-- Stable error_reason enum for the Web demo importer:
 -- required_field_empty
 -- invalid_integer
 -- invalid_numeric
 -- invalid_date
--- negative_amount
--- discount_out_of_range
--- quantity_not_positive
--- foreign_key_not_found
--- primary_key_conflict
+-- field_out_of_range       -- every field range/CHECK violation
+-- foreign_key_not_found    -- every missing referenced key
+-- primary_key_conflict     -- every duplicate primary key
+-- Do not introduce table-specific variants for the three reasons above.
