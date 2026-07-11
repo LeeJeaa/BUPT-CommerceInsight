@@ -223,4 +223,4 @@ MyBatis TPC-H 字段映射与 query_log 写入
 4. 重点验证 TPC-H Mapper、New-Order 触发器上下文、Payment 更新余额。
 5. 如 SQL 字段变化，由 A 更新 SQL/表契约，B 只改 Mapper/DTO 映射。
 
-本次待审环境未开放 `localhost:5432`，因此没有声称完成 PostgreSQL HTTP 实测。已完成 Mock HTTP 冒烟、Java 编译、单元/接口/结构测试；真实库联调按 `docs/integration/B后端真实库联调清单.md` 在 A/D 基线环境执行。
+本次待审环境未开放 `localhost:5432`，因此没有声称完成 PostgreSQL HTTP 实测。已完成 Mock HTTP 冒烟、Java 编译、单元/接口/结构测试；真实库联调按 `docs/docs-B/B后端真实库联调清单.md` 在 A/D 基线环境执行。

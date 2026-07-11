@@ -171,4 +171,4 @@ countOrder
 
 本后端只负责系统演示导入接口，不负责 D 的 dbgen、COPY 正式导入和 Python 压测脚本。
 
-真实库逐项联调步骤见 `docs/integration/B后端真实库联调清单.md`。本次待审环境未开放本机 `localhost:5432`，因此已完成代码、编译、Mock HTTP 冒烟和结构测试，PostgreSQL HTTP 联调需在 A/D 提供的基线环境执行。
+真实库逐项联调步骤见 `docs/docs-B/B后端真实库联调清单.md`。本次待审环境未开放本机 `localhost:5432`，因此已完成代码、编译、Mock HTTP 冒烟和结构测试，PostgreSQL HTTP 联调需在 A/D 提供的基线环境执行。
