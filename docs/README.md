@@ -22,6 +22,9 @@
 | `integration/联调与验收清单.md` | 联调和最终验收检查清单 |
 | `integration/frontend-backend-checklist.md` | 前后端联调检查 |
 | `integration/database-deploy-checklist.md` | 数据库 Docker 部署检查 |
+| `docs-A/` | 成员 A 数据库基线、交付和验证文档 |
+| `docs-B/README.md` | 成员 B 后端交付、修复、声明和联调文档索引 |
+| `docs-D/D成员交付说明.md` | 成员 D 部署、测试和报告交付说明 |
 
 使用顺序：
 

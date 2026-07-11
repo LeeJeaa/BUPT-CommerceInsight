@@ -15,3 +15,5 @@ cd backend
 ```
 
 Windows PowerShell 可把 `curl` 换成 `curl.exe`。
+
+先调用 `auth-login.curl`，将响应中的 `data.token` 保存为环境变量 `TOKEN`；其余真实 profile 示例均使用 `Authorization: Bearer $TOKEN`。固定 `mock-token` 只适用于 `mock` profile。

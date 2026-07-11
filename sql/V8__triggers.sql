@@ -13,7 +13,6 @@ BEGIN
         v_transaction_id := NULLIF(current_setting('app.transaction_id', true), '');
         v_change_type := COALESCE(
             NULLIF(current_setting('app.change_type', true), ''),
-            NULLIF(current_setting('app.change_reason', true), ''),
             'new_order'
         );
 

@@ -2,11 +2,13 @@ package com.bupt.commerceinsight.user;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
+import com.jayway.jsonpath.JsonPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,6 +46,20 @@ class UserControllerTest {
             .andExpect(jsonPath("$.data.pageNo", equalTo(1)))
             .andExpect(jsonPath("$.data.records[0].userId", equalTo(1)))
             .andExpect(jsonPath("$.data.records[0].realName", equalTo("管理员")));
+    }
+
+    @Test
+    void loggedInAdminCanListUsersWithIssuedToken() throws Exception {
+        String response = mockMvc.perform(post("/api/auth/login")
+                .contentType("application/json")
+                .content("{\"username\":\"admin\",\"password\":\"admin123\"}"))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        String token = JsonPath.read(response, "$.data.token");
+
+        mockMvc.perform(get("/api/users")
+                .header("Authorization", "Bearer " + token))
+            .andExpect(status().isOk());
     }
 
     @Test

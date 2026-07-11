@@ -1,6 +1,7 @@
 package com.bupt.commerceinsight.auth;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,7 +29,9 @@ class AuthControllerTest {
                 .content("{\"username\":\"admin\",\"password\":\"admin123\"}"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.code", equalTo(200)))
-            .andExpect(jsonPath("$.data.token", equalTo("mock-token")))
+            .andExpect(jsonPath("$.data.token", matchesPattern(
+                "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+            )))
             .andExpect(jsonPath("$.data.username", equalTo("admin")))
             .andExpect(jsonPath("$.data.role", equalTo("admin")))
             .andExpect(jsonPath("$.data.status", equalTo("approved")));
@@ -42,5 +45,14 @@ class AuthControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.username", equalTo("bob")))
             .andExpect(jsonPath("$.data.status", equalTo("pending")));
+    }
+
+    @Test
+    void malformedJsonReturnsBadRequest() throws Exception {
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"username\":\"admin\",\"password\":"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", equalTo(400)));
     }
 }

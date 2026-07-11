@@ -104,7 +104,7 @@ WHERE c_w_id = 1 AND c_d_id = 1 AND c_id = 1;
 
 ```bash
 curl -s -X POST http://localhost:8080/api/import/tasks \
-  -H "Authorization: Bearer mock-token" \
+  -H "Authorization: Bearer $TOKEN" \
   -F "tableName=orders" \
   -F "file=@orders_sample.tbl"
 ```
