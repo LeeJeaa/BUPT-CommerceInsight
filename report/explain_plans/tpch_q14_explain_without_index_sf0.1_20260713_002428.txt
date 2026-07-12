@@ -1,0 +1,37 @@
+﻿Pager usage is off.
+Timing is on.
+ query_name | scale_factor |  index_mode   |          captured_at
+------------+--------------+---------------+-------------------------------
+ q14        | 0.1          | without_index | 2026-07-13 00:24:31.418716+08
+(1 row)
+
+Time: 0.207 ms
+                                                                   QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=16973.00..16973.02 rows=1 width=32) (actual time=22.232..23.812 rows=1 loops=1)
+   Buffers: shared hit=7012 read=5646
+   ->  Gather  (cost=16972.76..16972.97 rows=2 width=64) (actual time=21.911..23.800 rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=7012 read=5646
+         ->  Partial Aggregate  (cost=15972.76..15972.77 rows=1 width=64) (actual time=20.397..20.399 rows=1 loops=3)
+               Buffers: shared hit=7012 read=5646
+               ->  Hash Join  (cost=866.00..15916.08 rows=3239 width=33) (actual time=3.641..19.712 rows=2543 loops=3)
+                     Hash Cond: (l.l_partkey = p.p_partkey)
+                     Buffers: shared hit=7012 read=5646
+                     ->  Parallel Seq Scan on lineitem l  (cost=0.00..15041.58 rows=3239 width=16) (actual time=0.024..15.277 rows=2543 loops=3)
+                           Filter: ((l_shipdate >= '1995-09-01'::date) AND (l_shipdate < '1995-10-01'::date))
+                           Rows Removed by Filter: 197647
+                           Buffers: shared hit=5642 read=5646
+                     ->  Hash  (cost=616.00..616.00 rows=20000 width=25) (actual time=3.466..3.466 rows=20000 loops=3)
+                           Buckets: 32768  Batches: 1  Memory Usage: 1411kB
+                           Buffers: shared hit=1248
+                           ->  Seq Scan on part p  (cost=0.00..616.00 rows=20000 width=25) (actual time=0.012..1.453 rows=20000 loops=3)
+                                 Buffers: shared hit=1248
+ Planning:
+   Buffers: shared hit=209 read=3
+ Planning Time: 0.364 ms
+ Execution Time: 23.883 ms
+(24 rows)
+
+Time: 24.958 ms

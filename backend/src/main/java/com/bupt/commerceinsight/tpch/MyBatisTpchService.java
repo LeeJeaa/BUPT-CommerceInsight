@@ -117,7 +117,7 @@ public class MyBatisTpchService implements TpchService {
             records.size(),
             records,
             chartData,
-            "PostgreSQL/MyBatis；正式 EXPLAIN 结果由 D 的性能测试流程归档"
+            "PostgreSQL/MyBatis；正式 EXPLAIN 结果由性能测试流程归档"
         );
     }
 }

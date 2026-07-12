@@ -1,137 +1,131 @@
-# D Environment And Import Guide
+# Database Deployment, Migration, and Formal Benchmark Guide
 
-This directory is owned by member D. It contains Docker PostgreSQL setup,
-initialization entrypoints, TPC-H data generation/import scripts, and database
-verification helpers.
+`sql/` is the only source of business SQL. `db/init/` only invokes canonical
+`/sql/V*.sql` assets and must not contain a second copy of DDL or DML.
 
-## Start PostgreSQL
+## Connection Contract
+
+| Item | Value |
+|---|---|
+| PostgreSQL | 16 |
+| Container | `tpc-commerce-postgres` |
+| Host port | `5432` |
+| Database | `tpc_commerce` |
+| User | `tpc_admin` |
+| Password | `tpc_password` |
+| JDBC URL | `jdbc:postgresql://localhost:5432/tpc_commerce` |
+
+These values match `backend/src/main/resources/application.yml`.
+
+## New Volume Initialization
 
 ```powershell
-cd db
-docker compose up -d
-docker compose ps
+docker compose -f db/docker-compose.yml up -d
+docker compose -f db/docker-compose.yml ps
 ```
 
-Default connection:
+For an empty PostgreSQL volume, `db/init/00_run_sql_assets.sh` applies:
 
 ```text
-host: localhost
-port: 5432
-database: tpc_commerce
-user: tpc_admin
-password: tpc_password
+V1 -> V2 -> V3 -> V4 -> V8 -> V9 -> optional V10 -> optional V11 -> V13
 ```
 
-Initialization switches in `db/docker-compose.yml`:
+V13 is applied last as an idempotent compatibility check. Docker runs files in
+`/docker-entrypoint-initdb.d` only for an empty data directory, so this path does
+not upgrade an already existing volume.
+
+## Existing Volume Migration
+
+Use the non-destructive migration entrypoint for an existing volume:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/migrate-db.ps1
+```
+
+The script starts the existing service without deleting its volume, applies
+`V13__migrate_legacy_stock_change_log.sql`, reapplies canonical V8 triggers,
+and verifies that `change_type` exists, `change_reason` is absent, and the stock
+audit trigger is installed. Preview commands without changing the database:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/migrate-db.ps1 -DryRun
+```
+
+## Destructive Reset Protection
+
+`reset-db.ps1` does nothing unless `-Force` is present. A destructive reset is:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/reset-db.ps1 -Force
+```
+
+Restart containers while preserving the volume:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/reset-db.ps1 -KeepData -Force
+```
+
+Read the warning before using either command. The first command deletes the
+PostgreSQL volume and all data in it.
+
+## Formal TPC-H COPY Flow
+
+Formal import order differs from development initialization:
 
 ```text
-LOAD_BASELINE_INDEXES=true      # set false for no-index EXPLAIN baseline
-LOAD_SAMPLE_DATA=false          # set true for B/C local sample validation
-RUN_BASELINE_VALIDATION=false   # set true only when sample data is loaded
+V1 -> V2 -> V3 -> COPY -> V4 -> V8 -> V9 -> V13 -> optional V10 -> row counts -> EXPLAIN
 ```
 
-## Reset Database
+Generate and import the required SF=0.1 baseline:
 
 ```powershell
-cd db/scripts
-.\reset-db.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/generate-tpch.ps1 -ScaleFactor 0.1
+$env:DEFER_POST_COPY_ASSETS = "true"
+$env:LOAD_SAMPLE_DATA = "false"
+$env:LOAD_BASELINE_INDEXES = "false"
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/reset-db.ps1 -Force
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/load-tpch.ps1 `
+  -ScaleFactor 0.1 -DataDir <absolute-SF0.1-directory> -FileExtension tbl -FinalizeSchema
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/count-tables.ps1
 ```
 
-Use `-KeepData` when you want to restart containers without deleting the
-PostgreSQL volume.
+`load-tpch.ps1` removes the trailing `|` from dbgen `.tbl` rows before COPY and
+loads tables in dependency order. `-FinalizeSchema` applies V4, V8, V9, and V13
+after COPY; add `-LoadBaselineIndexes` to apply V10 immediately, or leave it off
+when capturing the no-index baseline first. Clear `DEFER_POST_COPY_ASSETS` after
+the formal reset. SF=0.6 and SF=1 use the same commands after SF=0.1 succeeds and
+machine capacity permits.
 
-## SQL Asset Rule
+## EXPLAIN ANALYZE Matrix
 
-`sql/` is the only source directory for business SQL. `db/init/` only invokes
-`/sql/V*.sql` files from Docker initialization scripts.
-
-Development initialization order:
-
-```text
-V1 -> V2 -> V3 -> V4 -> V8 -> V9 -> optional V10 -> optional V11
-```
-
-Formal import order:
-
-```text
-V1 -> V2 -> V3 -> COPY TPC-H data -> V4 -> V8 -> V9 -> optional V10 -> row counts -> EXPLAIN
-```
-
-## Generate TPC-H Data
-
-Put dbgen under `tools/tpch-dbgen`, then run:
+The script prepares the requested index state itself. Each run writes separate
+Q1, Q5, Q12, and Q14 plans plus a JSON manifest.
 
 ```powershell
-cd db/scripts
-.\generate-tpch.ps1 -ScaleFactor 0.1
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/run-tpch-explain.ps1 `
+  -IndexMode without_index -ScaleFactor 0.1
+
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/run-tpch-explain.ps1 `
+  -IndexMode with_index -ScaleFactor 0.1
 ```
 
-Generated `.tbl` files go under `data/tpch/SF0.1` by default. Do not commit
-large generated data files.
+Always run `with_index` last so the normal application index state is restored.
+Plans are written to `report/explain_plans/`.
 
-The provided course dataset under `资料/tpc-h数据(2)` already contains `*.txt`
-files generated at `dbgen -s 0.2` scale. It is suitable for
-development, import validation, and feature demos. The guide requires at least
-600M total data for performance evaluation, so final performance testing still
-needs a larger generated dataset.
+## HTTP Performance Tests
 
-Inspect the provided dataset:
+Start the backend with the `dev` profile, then run the independent acceptance
+entrypoints documented in `test/README.md`. Both scripts write JSON and CSV,
+use `successCount` and `failCount`, POST each summary to
+`/api/performance/results`, and save the backend write response.
+
+## Verification Helpers
 
 ```powershell
-cd db/scripts
-.\inspect-tpch-data.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/verify-environment.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/smoke-db.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/count-tables.ps1
 ```
 
-## Load TPC-H Data
-
-Preview COPY commands:
-
-```powershell
-cd db/scripts
-.\load-tpch.ps1 -ScaleFactor 0.2 -DryRun
-```
-
-Run import after data exists:
-
-```powershell
-.\load-tpch.ps1 -ScaleFactor 0.2 -FileExtension txt
-```
-
-The scripts auto-detect the provided `tpc-h数据(2)` directory to avoid Windows
-PowerShell source-encoding issues with Chinese paths.
-
-Logs are written to `report/import_logs/`.
-
-## Count Rows
-
-```powershell
-cd db/scripts
-.\count-tables.ps1
-```
-
-If running from the host with `psql` installed:
-
-```powershell
-psql -h localhost -p 5432 -U commerce -d commerce_insight -f db/scripts/count-tables.sql
-```
-
-## Verify Local Environment
-
-```powershell
-cd db/scripts
-.\verify-environment.ps1
-```
-
-This checks Docker CLI availability, Docker daemon status, Compose config,
-required directories, LF line endings for the init script, and whether A's SQL
-assets are already present.
-
-## Smoke Check PostgreSQL
-
-```powershell
-cd db/scripts
-.\smoke-db.ps1
-```
-
-This verifies that the `tpc-commerce-postgres` container accepts SQL
-connections.
+Logs are stored under `report/import_logs/`, plans under
+`report/explain_plans/`, and concurrency results under `report/performance/`.

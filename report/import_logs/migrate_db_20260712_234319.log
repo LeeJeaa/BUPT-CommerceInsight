@@ -1,0 +1,36 @@
+﻿[2026-07-12 23:43:19] Non-destructive database migration started. Database volume will be preserved.
+[2026-07-12 23:43:19] Command: docker compose -f D:\git\TPC CommerceInsight_publish\db\docker-compose.yml up -d postgres
+ Container tpc-commerce-postgres Recreate
+ Container tpc-commerce-postgres Recreated
+ Container tpc-commerce-postgres Starting
+ Container tpc-commerce-postgres Started
+[2026-07-12 23:43:20] Command: docker exec tpc-commerce-postgres psql -v ON_ERROR_STOP=1 -U tpc_admin -d tpc_commerce -f /sql/V13__migrate_legacy_stock_change_log.sql
+BEGIN
+DO
+CREATE FUNCTION
+DROP TRIGGER
+CREATE TRIGGER
+COMMIT
+[2026-07-12 23:43:21] Command: docker exec tpc-commerce-postgres psql -v ON_ERROR_STOP=1 -U tpc_admin -d tpc_commerce -f /sql/V8__triggers.sql
+CREATE FUNCTION
+DROP TRIGGER
+CREATE TRIGGER
+CREATE FUNCTION
+DROP TRIGGER
+CREATE TRIGGER
+[2026-07-12 23:43:21] Command: docker exec tpc-commerce-postgres psql -v ON_ERROR_STOP=1 -U tpc_admin -d tpc_commerce -qAt -c SELECT
+  EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'stock_change_log' AND column_name = 'change_type'
+  )::int || '|' ||
+  EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'stock_change_log' AND column_name = 'change_reason'
+  )::int || '|' ||
+  EXISTS (
+    SELECT 1 FROM pg_trigger
+    WHERE tgname = 'trg_stock_quantity_change' AND NOT tgisinternal
+  )::int;
+1|0|1
+[2026-07-12 23:43:21] Migration verification: change_type present, change_reason absent, stock trigger present.
+[2026-07-12 23:43:21] Non-destructive migration completed. Existing PostgreSQL volume was not deleted.

@@ -24,7 +24,7 @@ function Write-Log {
     param([string]$Message)
     $line = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message"
     Write-Host $line
-    Add-Content -Path $logFile -Value $line
+    Add-Content -Path $logFile -Value $line -Encoding UTF8
 }
 
 function Invoke-LoggedCommand {
@@ -41,8 +41,16 @@ function Invoke-LoggedCommand {
     $stdout = $process.StandardOutput.ReadToEnd()
     $stderr = $process.StandardError.ReadToEnd()
     $process.WaitForExit()
-    if ($stdout) { $stdout.TrimEnd() | Tee-Object -FilePath $logFile -Append }
-    if ($stderr) { $stderr.TrimEnd() | Tee-Object -FilePath $logFile -Append }
+    if ($stdout) {
+        $text = $stdout.TrimEnd()
+        Write-Host $text
+        Add-Content -Path $logFile -Value $text -Encoding UTF8
+    }
+    if ($stderr) {
+        $text = $stderr.TrimEnd()
+        Write-Host $text
+        Add-Content -Path $logFile -Value $text -Encoding UTF8
+    }
     if ($process.ExitCode -ne 0) {
         throw "Command failed with exit code $($process.ExitCode): $($Command -join ' ')"
     }
@@ -57,19 +65,36 @@ if (-not $resolvedDbgenDir) {
 }
 
 $dbgenExe = Join-Path $resolvedDbgenDir "dbgen.exe"
-if (-not (Test-Path $dbgenExe)) {
-    $dbgenExe = Join-Path $resolvedDbgenDir "dbgen"
-}
-if (-not (Test-Path $dbgenExe)) {
+$linuxDbgen = Join-Path $resolvedDbgenDir "dbgen"
+if (-not (Test-Path $dbgenExe) -and -not (Test-Path $linuxDbgen)) {
     throw "Could not find dbgen executable in $resolvedDbgenDir"
 }
 
 Push-Location $outputDir
 try {
-    Write-Log "Running: $dbgenExe -s $ScaleFactor -f"
-    Invoke-LoggedCommand @($dbgenExe, "-s", $ScaleFactor, "-f")
+    if (Test-Path $dbgenExe) {
+        Write-Log "Running native Windows dbgen: $dbgenExe -s $ScaleFactor -f"
+        Invoke-LoggedCommand @($dbgenExe, "-s", $ScaleFactor, "-f")
+    }
+    else {
+        if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+            throw "Linux dbgen found but Docker CLI is unavailable. Provide dbgen.exe or start Docker."
+        }
+        Write-Log "Running Linux dbgen in an ephemeral PostgreSQL 16 container."
+        $dbgenMount = "type=bind,source=$($resolvedDbgenDir.Path),target=/dbgen,readonly"
+        $outputMount = "type=bind,source=$outputDir,target=/output"
+        Invoke-LoggedCommand @(
+            "docker", "run", "--rm",
+            "--mount", $dbgenMount,
+            "--mount", $outputMount,
+            "postgres:16", "bash", "-lc",
+            "cp /dbgen/dists.dss /output/dists.dss && cd /output && /dbgen/dbgen -s $ScaleFactor -f"
+        )
+    }
     Write-Log "Generated files:"
-    Get-ChildItem -Filter "*.tbl" | Select-Object Name,Length | Format-Table | Out-String | Tee-Object -FilePath $logFile -Append
+    $tableText = Get-ChildItem -Filter "*.tbl" | Select-Object Name,Length | Format-Table | Out-String
+    Write-Host $tableText
+    Add-Content -Path $logFile -Value $tableText -Encoding UTF8
 }
 finally {
     Pop-Location

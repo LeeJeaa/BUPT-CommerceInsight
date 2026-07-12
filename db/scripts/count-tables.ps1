@@ -30,8 +30,16 @@ function Invoke-LoggedCommand {
     $stdout = $process.StandardOutput.ReadToEnd()
     $stderr = $process.StandardError.ReadToEnd()
     $process.WaitForExit()
-    if ($stdout) { $stdout.TrimEnd() | Tee-Object -FilePath $logFile -Append }
-    if ($stderr) { $stderr.TrimEnd() | Tee-Object -FilePath $logFile -Append }
+    if ($stdout) {
+        $text = $stdout.TrimEnd()
+        Write-Host $text
+        Add-Content -Path $logFile -Value $text -Encoding UTF8
+    }
+    if ($stderr) {
+        $text = $stderr.TrimEnd()
+        Write-Host $text
+        Add-Content -Path $logFile -Value $text -Encoding UTF8
+    }
     if ($process.ExitCode -ne 0) {
         throw "Command failed with exit code $($process.ExitCode): $($Command -join ' ')"
     }

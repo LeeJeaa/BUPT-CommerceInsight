@@ -1,10 +1,19 @@
 param(
     [string]$ComposeFile = "../docker-compose.yml",
     [string]$LogDir = "../../report/import_logs",
-    [switch]$KeepData
+    [switch]$KeepData,
+    [switch]$Force
 )
 
 $ErrorActionPreference = "Stop"
+
+if (-not $Force) {
+    Write-Warning "reset-db.ps1 stops the database and can permanently delete the PostgreSQL volume."
+    Write-Host "No changes were made. Review the command, then rerun with -Force."
+    Write-Host "Destructive reset: .\reset-db.ps1 -Force"
+    Write-Host "Container restart without deleting the volume: .\reset-db.ps1 -KeepData -Force"
+    exit 2
+}
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $dbDir = Resolve-Path (Join-Path $scriptDir "..")
@@ -19,7 +28,7 @@ function Write-Log {
     param([string]$Message)
     $line = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message"
     Write-Host $line
-    Add-Content -Path $logFile -Value $line
+    Add-Content -Path $logFile -Value $line -Encoding UTF8
 }
 
 function Invoke-LoggedCommand {
@@ -36,14 +45,22 @@ function Invoke-LoggedCommand {
     $stdout = $process.StandardOutput.ReadToEnd()
     $stderr = $process.StandardError.ReadToEnd()
     $process.WaitForExit()
-    if ($stdout) { $stdout.TrimEnd() | Tee-Object -FilePath $logFile -Append }
-    if ($stderr) { $stderr.TrimEnd() | Tee-Object -FilePath $logFile -Append }
+    if ($stdout) {
+        $text = $stdout.TrimEnd()
+        Write-Host $text
+        Add-Content -Path $logFile -Value $text -Encoding UTF8
+    }
+    if ($stderr) {
+        $text = $stderr.TrimEnd()
+        Write-Host $text
+        Add-Content -Path $logFile -Value $text -Encoding UTF8
+    }
     if ($process.ExitCode -ne 0) {
         throw "Command failed with exit code $($process.ExitCode): $($Command -join ' ')"
     }
 }
 
-Write-Log "Reset started. Compose: $composePath"
+Write-Log "Reset confirmed with -Force. Compose: $composePath KeepData=$KeepData"
 Push-Location $dbDir
 try {
     if ($KeepData) {
