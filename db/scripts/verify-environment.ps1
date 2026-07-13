@@ -44,7 +44,7 @@ foreach ($dir in $requiredDirs) {
 }
 
 $sqlFiles = Get-ChildItem -Path (Join-Path $root "sql") -Filter "V*.sql" -ErrorAction SilentlyContinue
-Add-Check $checks "SQL assets present" (($sqlFiles | Measure-Object).Count -gt 0) "Expected A's V*.sql files under sql/; missing is OK before A delivery."
+Add-Check $checks "SQL assets present" (($sqlFiles | Measure-Object).Count -gt 0) "Expected V*.sql files under sql/."
 
 $v13Path = Join-Path $root "sql/V13__migrate_legacy_stock_change_log.sql"
 $initText = Get-Content -Raw -LiteralPath $initPath
