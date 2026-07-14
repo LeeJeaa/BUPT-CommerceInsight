@@ -1,0 +1,33 @@
+{
+  "code": 200,
+  "message": "success",
+  "data": {
+    "testName": "TPC-C new-order Concurrent Transaction Test SFcourse-minimal",
+    "threadCount": 4,
+    "totalRequests": 20,
+    "successCount": 20,
+    "failCount": 0,
+    "avgLatencyMs": 103.59,
+    "maxLatencyMs": 224.16,
+    "minLatencyMs": 53.26,
+    "throughput": 36.55,
+    "records": [
+      {
+        "threadCount": 4,
+        "avgLatencyMs": 103.59,
+        "throughput": 36.55
+      }
+    ],
+    "chartData": {
+      "xAxis": [
+        4
+      ],
+      "throughputSeries": [
+        36.55
+      ],
+      "latencySeries": [
+        103.59
+      ]
+    }
+  }
+}

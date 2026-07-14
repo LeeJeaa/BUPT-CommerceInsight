@@ -1,0 +1,2 @@
+﻿testName,testType,operation,scaleFactor,threadCount,totalRequests,successCount,failCount,avgLatencyMs,p95LatencyMs,maxLatencyMs,minLatencyMs,throughput,startedAt,endedAt,elapsedSeconds,targetUrl,qps
+TPC-H Q1 Concurrent Query Test SF0.6,tpch,q1,0.6,4,20,20,0,1427.046,1979.476,2006.415,1075.836,2.602,2026-07-13T21:35:25+08:00,2026-07-13T21:35:33+08:00,7.687,http://localhost:8080/api/tpch/q1?shipDate=1998-09-02,2.602

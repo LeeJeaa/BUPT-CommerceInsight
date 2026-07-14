@@ -1,0 +1,41 @@
+{
+  "code": 200,
+  "message": "success",
+  "data": {
+    "testName": "TPC-H Q5 Concurrent Query Test SF0.6",
+    "threadCount": 4,
+    "totalRequests": 20,
+    "successCount": 20,
+    "failCount": 0,
+    "avgLatencyMs": 753.81,
+    "maxLatencyMs": 1958.98,
+    "minLatencyMs": 432.82,
+    "throughput": 5.3,
+    "records": [
+      {
+        "threadCount": 4,
+        "avgLatencyMs": 1427.05,
+        "throughput": 2.6
+      },
+      {
+        "threadCount": 4,
+        "avgLatencyMs": 753.81,
+        "throughput": 5.3
+      }
+    ],
+    "chartData": {
+      "xAxis": [
+        4,
+        4
+      ],
+      "throughputSeries": [
+        2.6,
+        5.3
+      ],
+      "latencySeries": [
+        1427.05,
+        753.81
+      ]
+    }
+  }
+}

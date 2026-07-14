@@ -89,6 +89,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/load-tpch.ps1 `
 powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/count-tables.ps1
 ```
 
+For formal evidence, pass `-DataScale` to the reset and row-count scripts so
+their log names identify the tested dataset, for example
+`-DataScale 0.6`. The parameter is an evidence label and does not change data.
+
 `load-tpch.ps1` removes the trailing `|` from dbgen `.tbl` rows before COPY and
 loads tables in dependency order. `-FinalizeSchema` applies V4, V8, V9, and V13
 after COPY; add `-LoadBaselineIndexes` to apply V10 immediately, or leave it off
@@ -96,10 +100,39 @@ when capturing the no-index baseline first. Clear `DEFER_POST_COPY_ASSETS` after
 the formal reset. SF=0.6 and SF=1 use the same commands after SF=0.1 succeeds and
 machine capacity permits.
 
+Formal TPC-H import intentionally skips V11 because its TPC-H sample rows would
+conflict with dbgen primary keys. To add only the course-minimal TPC-C
+prerequisites to the combined database, use the dedicated loader:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass `
+  -File db/scripts/load-tpcc-prerequisites.ps1
+```
+
+The loader reads the canonical V11 asset, extracts only the
+`warehouse/district/tpcc_customer/item/stock` block, and refuses a partially
+populated target. It does not duplicate the SQL definitions in `db/`.
+
 ## EXPLAIN ANALYZE Matrix
 
 The script prepares the requested index state itself. Each run writes separate
 Q1, Q5, Q12, and Q14 plans plus a JSON manifest.
+
+TPC-C New-Order and Payment use an independent rollback-only entrypoint. It
+executes the same representative reads and writes used by the real service,
+captures `EXPLAIN (ANALYZE, BUFFERS)`, and rolls the transaction back so the
+acceptance evidence does not alter business rows:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass `
+  -File db/scripts/run-tpcc-explain.ps1 `
+  -Transaction all `
+  -DataScale course-minimal
+```
+
+TPC-H scale factors and TPC-C warehouse scale are independent. `-DataScale`
+is an evidence label for the TPC-C dataset and must not be presented as a
+TPC-H scale factor.
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File db/scripts/run-tpch-explain.ps1 `

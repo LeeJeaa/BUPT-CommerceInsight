@@ -2,7 +2,9 @@ param(
     [string]$Container = "tpc-commerce-postgres",
     [string]$Database = "tpc_commerce",
     [string]$User = "tpc_admin",
-    [string]$LogDir = "../../report/import_logs"
+    [string]$LogDir = "../../report/import_logs",
+    [ValidatePattern("^[A-Za-z0-9._-]*$")]
+    [string]$DataScale = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -13,8 +15,13 @@ $resolvedLogDir = Join-Path $scriptDir $LogDir
 New-Item -ItemType Directory -Force -Path $resolvedLogDir | Out-Null
 
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-$logFile = Join-Path $resolvedLogDir "row_counts_$timestamp.txt"
+$scaleSuffix = if ($DataScale) { "_sf$DataScale" } else { "" }
+$logFile = Join-Path $resolvedLogDir "row_counts$($scaleSuffix)_$timestamp.txt"
 $containerSql = "/tmp/count-tables.sql"
+
+if ($DataScale) {
+    Add-Content -Path $logFile -Value "Data scale: SF=$DataScale" -Encoding UTF8
+}
 
 function Invoke-LoggedCommand {
     param([string[]]$Command)

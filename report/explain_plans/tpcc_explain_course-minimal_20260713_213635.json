@@ -1,0 +1,18 @@
+﻿{
+    "capturedAt":  "2026-07-13T21:36:37.5872744+08:00",
+    "dataScale":  "course-minimal",
+    "transaction":  "all",
+    "rollbackOnly":  true,
+    "files":  [
+                  "D:\\git\\TPC CommerceInsight_publish\\report\\explain_plans\\tpcc_new_order_explain_course-minimal_20260713_213635.txt",
+                  "D:\\git\\TPC CommerceInsight_publish\\report\\explain_plans\\tpcc_payment_explain_course-minimal_20260713_213635.txt"
+              ],
+    "parameters":  {
+                       "warehouseId":  1,
+                       "districtId":  1,
+                       "customerId":  1,
+                       "itemId":  1001,
+                       "quantity":  1,
+                       "paymentAmount":  25
+                   }
+}

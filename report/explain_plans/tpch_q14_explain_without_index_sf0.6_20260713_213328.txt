@@ -1,0 +1,37 @@
+Pager usage is off.
+Timing is on.
+ query_name | scale_factor |  index_mode   |          captured_at
+------------+--------------+---------------+-------------------------------
+ q14        | 0.6          | without_index | 2026-07-13 21:33:35.656796+08
+(1 row)
+
+Time: 0.313 ms
+                                                                     QUERY PLAN
+----------------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=95467.76..95467.78 rows=1 width=32) (actual time=185.614..188.362 rows=1 loops=1)
+   Buffers: shared hit=8897 read=61233
+   ->  Gather  (cost=95467.52..95467.73 rows=2 width=64) (actual time=185.158..188.346 rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=8897 read=61233
+         ->  Partial Aggregate  (cost=94467.52..94467.53 rows=1 width=64) (actual time=182.741..182.743 rows=1 loops=3)
+               Buffers: shared hit=8897 read=61233
+               ->  Parallel Hash Join  (cost=4052.23..94149.02 rows=18200 width=33) (actual time=31.286..176.389 rows=15226 loops=3)
+                     Hash Cond: (l.l_partkey = p.p_partkey)
+                     Buffers: shared hit=8897 read=61233
+                     ->  Parallel Seq Scan on lineitem l  (cost=0.00..90049.01 rows=18200 width=16) (actual time=0.052..135.540 rows=15226 loops=3)
+                           Filter: ((l_shipdate >= '1995-09-01'::date) AND (l_shipdate < '1995-10-01'::date))
+                           Rows Removed by Filter: 1185120
+                           Buffers: shared hit=8775 read=58769
+                     ->  Parallel Hash  (cost=3169.88..3169.88 rows=70588 width=25) (actual time=30.492..30.493 rows=40000 loops=3)
+                           Buckets: 131072  Batches: 1  Memory Usage: 8320kB
+                           Buffers: shared read=2464
+                           ->  Parallel Seq Scan on part p  (cost=0.00..3169.88 rows=70588 width=25) (actual time=0.111..17.594 rows=40000 loops=3)
+                                 Buffers: shared read=2464
+ Planning:
+   Buffers: shared hit=209 read=9 dirtied=2
+ Planning Time: 2.647 ms
+ Execution Time: 188.459 ms
+(24 rows)
+
+Time: 196.797 ms

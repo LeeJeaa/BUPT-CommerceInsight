@@ -1,0 +1,538 @@
+[2026-07-13 21:31:47] TPC-H load started. SF=0.6 DataDir=D:\git\TPC CommerceInsight_publish\data\tpch\SF0.6 ResolvedDataDir=D:\git\TPC CommerceInsight_publish\data\tpch\SF0.6 FileExtension=tbl Container=tpc-commerce-postgres
+[2026-07-13 21:31:47] Table region: D:\git\TPC CommerceInsight_publish\data\tpch\SF0.6\region.tbl
+[2026-07-13 21:31:47] COPY SQL: \copy region (r_regionkey,r_name,r_comment) FROM '/tmp/tpch/region.csv' WITH (FORMAT csv, DELIMITER '|', NULL '', HEADER false)
+COPY 5
+[2026-07-13 21:31:48] Table nation: D:\git\TPC CommerceInsight_publish\data\tpch\SF0.6\nation.tbl
+[2026-07-13 21:31:48] COPY SQL: \copy nation (n_nationkey,n_name,n_regionkey,n_comment) FROM '/tmp/tpch/nation.csv' WITH (FORMAT csv, DELIMITER '|', NULL '', HEADER false)
+COPY 25
+[2026-07-13 21:31:49] Table supplier: D:\git\TPC CommerceInsight_publish\data\tpch\SF0.6\supplier.tbl
+[2026-07-13 21:31:49] COPY SQL: \copy supplier (s_suppkey,s_name,s_address,s_nationkey,s_phone,s_acctbal,s_comment) FROM '/tmp/tpch/supplier.csv' WITH (FORMAT csv, DELIMITER '|', NULL '', HEADER false)
+COPY 6000
+[2026-07-13 21:31:50] Table customer: D:\git\TPC CommerceInsight_publish\data\tpch\SF0.6\customer.tbl
+[2026-07-13 21:31:50] COPY SQL: \copy customer (c_custkey,c_name,c_address,c_nationkey,c_phone,c_acctbal,c_mktsegment,c_comment) FROM '/tmp/tpch/customer.csv' WITH (FORMAT csv, DELIMITER '|', NULL '', HEADER false)
+COPY 90000
+[2026-07-13 21:31:51] Table part: D:\git\TPC CommerceInsight_publish\data\tpch\SF0.6\part.tbl
+[2026-07-13 21:31:51] COPY SQL: \copy part (p_partkey,p_name,p_mfgr,p_brand,p_type,p_size,p_container,p_retailprice,p_comment) FROM '/tmp/tpch/part.csv' WITH (FORMAT csv, DELIMITER '|', NULL '', HEADER false)
+COPY 120000
+[2026-07-13 21:31:52] Table partsupp: D:\git\TPC CommerceInsight_publish\data\tpch\SF0.6\partsupp.tbl
+[2026-07-13 21:31:52] COPY SQL: \copy partsupp (ps_partkey,ps_suppkey,ps_availqty,ps_supplycost,ps_comment) FROM '/tmp/tpch/partsupp.csv' WITH (FORMAT csv, DELIMITER '|', NULL '', HEADER false)
+COPY 480000
+[2026-07-13 21:31:56] Table orders: D:\git\TPC CommerceInsight_publish\data\tpch\SF0.6\orders.tbl
+[2026-07-13 21:31:56] COPY SQL: \copy orders (o_orderkey,o_custkey,o_orderstatus,o_totalprice,o_orderdate,o_orderpriority,o_clerk,o_shippriority,o_comment) FROM '/tmp/tpch/orders.csv' WITH (FORMAT csv, DELIMITER '|', NULL '', HEADER false)
+COPY 900000
+[2026-07-13 21:32:02] Table lineitem: D:\git\TPC CommerceInsight_publish\data\tpch\SF0.6\lineitem.tbl
+[2026-07-13 21:32:02] COPY SQL: \copy lineitem (l_orderkey,l_partkey,l_suppkey,l_linenumber,l_quantity,l_extendedprice,l_discount,l_tax,l_returnflag,l_linestatus,l_shipdate,l_commitdate,l_receiptdate,l_shipinstruct,l_shipmode,l_comment) FROM '/tmp/tpch/lineitem.csv' WITH (FORMAT csv, DELIMITER '|', NULL '', HEADER false)
+COPY 3601036
+[2026-07-13 21:32:29] Applying post-COPY asset: /sql/V4__add_constraints.sql
+CREATE FUNCTION
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+ _ci_add_constraint_if_not_exists
+----------------------------------
+
+(1 row)
+
+DROP FUNCTION
+[2026-07-13 21:32:39] Applying post-COPY asset: /sql/V8__triggers.sql
+CREATE FUNCTION
+DROP TRIGGER
+CREATE TRIGGER
+CREATE FUNCTION
+DROP TRIGGER
+CREATE TRIGGER
+psql:/sql/V8__triggers.sql:42: NOTICE:  trigger "trg_stock_quantity_change" for relation "stock" does not exist, skipping
+psql:/sql/V8__triggers.sql:72: NOTICE:  trigger "trg_import_task_audit" for relation "import_task" does not exist, skipping
+[2026-07-13 21:32:39] Applying post-COPY asset: /sql/V9__procedures.sql
+CREATE FUNCTION
+CREATE FUNCTION
+[2026-07-13 21:32:39] Applying post-COPY asset: /sql/V13__migrate_legacy_stock_change_log.sql
+BEGIN
+DO
+CREATE FUNCTION
+DROP TRIGGER
+CREATE TRIGGER
+COMMIT
+[2026-07-13 21:32:40] TPC-H load completed. Run count-tables.sql to verify row counts.

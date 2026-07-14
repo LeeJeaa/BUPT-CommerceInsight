@@ -1,0 +1,20 @@
+﻿[2026-07-13 21:28:15] TPC-H dbgen started. SF=0.6
+[2026-07-13 21:28:15] Running Linux dbgen in an ephemeral PostgreSQL 16 container.
+TPC-H Population Generator (Version 2.17.2)
+Copyright Transaction Processing Performance Council 1994 - 2010
+[2026-07-13 21:30:13] Generated files:
+
+Name            Length
+----            ------
+customer.tbl  14572362
+lineitem.tbl 453909547
+nation.tbl        2224
+orders.tbl   102722243
+part.tbl      14432974
+partsupp.tbl  71171291
+region.tbl         389
+supplier.tbl    845822
+
+
+
+[2026-07-13 21:30:13] TPC-H dbgen completed. Output: D:\git\TPC CommerceInsight_publish\db\scripts\..\..\data\tpch\SF0.6

@@ -1,6 +1,8 @@
 param(
     [string]$ComposeFile = "../docker-compose.yml",
     [string]$LogDir = "../../report/import_logs",
+    [ValidatePattern("^[A-Za-z0-9._-]*$")]
+    [string]$DataScale = "",
     [switch]$KeepData,
     [switch]$Force
 )
@@ -22,7 +24,8 @@ $resolvedLogDir = Join-Path $scriptDir $LogDir
 New-Item -ItemType Directory -Force -Path $resolvedLogDir | Out-Null
 
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-$logFile = Join-Path $resolvedLogDir "reset_db_$timestamp.log"
+$scaleSuffix = if ($DataScale) { "_sf$DataScale" } else { "" }
+$logFile = Join-Path $resolvedLogDir "reset_db$($scaleSuffix)_$timestamp.log"
 
 function Write-Log {
     param([string]$Message)
@@ -60,7 +63,7 @@ function Invoke-LoggedCommand {
     }
 }
 
-Write-Log "Reset confirmed with -Force. Compose: $composePath KeepData=$KeepData"
+Write-Log "Reset confirmed with -Force. Compose: $composePath KeepData=$KeepData DataScale=$DataScale"
 Push-Location $dbDir
 try {
     if ($KeepData) {

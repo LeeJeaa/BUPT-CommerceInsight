@@ -1,6 +1,7 @@
 param(
     [string]$ComposeFile = "../docker-compose.yml",
-    [string]$InitScript = "../init/00_run_sql_assets.sh"
+    [string]$InitScript = "../init/00_run_sql_assets.sh",
+    [string]$GitExecutable = ""
 )
 
 $ErrorActionPreference = "Continue"
@@ -37,6 +38,20 @@ Add-Check $checks "Compose config valid" ($LASTEXITCODE -eq 0) "docker compose -
 $initBytes = [System.IO.File]::ReadAllBytes($initPath)
 Add-Check $checks "Init script LF only" (-not ($initBytes -contains 13)) "db/init/00_run_sql_assets.sh"
 
+$gitPath = if ($GitExecutable) {
+    (Resolve-Path -LiteralPath $GitExecutable -ErrorAction SilentlyContinue).Path
+}
+else {
+    (Get-Command git -ErrorAction SilentlyContinue).Source
+}
+if ($gitPath) {
+    $gitStage = & $gitPath -C $root ls-files --stage -- db/init/00_run_sql_assets.sh 2>&1
+    Add-Check $checks "Init script Git mode 100755" ($LASTEXITCODE -eq 0 -and $gitStage -match '^100755\s') ($gitStage -join "")
+}
+else {
+    Add-Check $checks "Init script Git mode 100755" $false "Git CLI unavailable; pass -GitExecutable to verify the index mode."
+}
+
 $requiredDirs = @("sql", "db/init", "db/scripts", "report/import_logs", "report/explain_plans", "report/performance", "test")
 foreach ($dir in $requiredDirs) {
     $path = Join-Path $root $dir
@@ -61,6 +76,8 @@ $resetText = if (Test-Path $resetPath) { Get-Content -Raw -LiteralPath $resetPat
 Add-Check $checks "Reset requires explicit Force" ($resetText -match '\[switch\]\$Force' -and $resetText -match 'if \(-not \$Force\)') $resetPath
 Add-Check $checks "TPC-H HTTP test entrypoint present" (Test-Path (Join-Path $root "test/tpch_concurrent_test.py")) "test/tpch_concurrent_test.py"
 Add-Check $checks "TPC-C HTTP test entrypoint present" (Test-Path (Join-Path $root "test/tpcc_concurrent_test.py")) "test/tpcc_concurrent_test.py"
+Add-Check $checks "TPC-C EXPLAIN entrypoint present" (Test-Path (Join-Path $root "db/scripts/run-tpcc-explain.ps1")) "db/scripts/run-tpcc-explain.ps1"
+Add-Check $checks "TPC-C prerequisite loader present" (Test-Path (Join-Path $root "db/scripts/load-tpcc-prerequisites.ps1")) "db/scripts/load-tpcc-prerequisites.ps1"
 
 $checks | Format-Table -AutoSize
 

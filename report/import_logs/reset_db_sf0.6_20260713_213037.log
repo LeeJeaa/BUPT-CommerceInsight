@@ -1,0 +1,23 @@
+[2026-07-13 21:30:37] Reset confirmed with -Force. Compose: D:\git\TPC CommerceInsight_publish\db\docker-compose.yml KeepData=False
+[2026-07-13 21:30:37] Stopping containers and deleting database volumes.
+ Container tpc-commerce-postgres Stopping
+ Container tpc-commerce-postgres Stopped
+ Container tpc-commerce-postgres Removing
+ Container tpc-commerce-postgres Removed
+ Network db_default Removing
+ Volume db_postgres_data Removing
+ Volume db_postgres_data Removed
+ Network db_default Removed
+[2026-07-13 21:30:40] Starting PostgreSQL.
+ Network db_default Creating
+ Network db_default Created
+ Volume db_postgres_data Creating
+ Volume db_postgres_data Created
+ Container tpc-commerce-postgres Creating
+ Container tpc-commerce-postgres Created
+ Container tpc-commerce-postgres Starting
+ Container tpc-commerce-postgres Started
+[2026-07-13 21:30:41] Container status.
+NAME                    IMAGE         COMMAND                  SERVICE    CREATED        STATUS                                     PORTS
+tpc-commerce-postgres   postgres:16   "docker-entrypoint.s…"   postgres   1 second ago   Up Less than a second (health: starting)   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+[2026-07-13 21:30:41] Reset completed.

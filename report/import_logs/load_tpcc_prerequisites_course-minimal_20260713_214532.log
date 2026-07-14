@@ -1,0 +1,11 @@
+﻿[2026-07-13 21:45:32] TPC-C prerequisite load started. Asset=D:\git\TPC CommerceInsight_publish\sql\V11__sample_data.sql DryRun=False
+0,0,0,0,0
+BEGIN
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 2
+INSERT 0 2
+COMMIT
+1,1,1,2,2
+[2026-07-13 21:45:33] TPC-C prerequisites loaded from canonical V11. Counts=1,1,1,2,2

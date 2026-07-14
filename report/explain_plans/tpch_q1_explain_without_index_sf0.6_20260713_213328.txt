@@ -1,0 +1,44 @@
+Pager usage is off.
+Timing is on.
+ query_name | scale_factor |  index_mode   |          captured_at
+------------+--------------+---------------+-------------------------------
+ q1         | 0.6          | without_index | 2026-07-13 21:33:32.013804+08
+(1 row)
+
+Time: 0.594 ms
+                                                                      QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize GroupAggregate  (cost=138995.93..138997.89 rows=6 width=236) (actual time=1196.697..1200.092 rows=4 loops=1)
+   Group Key: l_returnflag, l_linestatus
+   Buffers: shared hit=2210 read=65348
+   ->  Gather Merge  (cost=138995.93..138997.33 rows=12 width=236) (actual time=1196.674..1200.056 rows=12 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=2210 read=65348
+         ->  Sort  (cost=137995.91..137995.92 rows=6 width=236) (actual time=1179.842..1179.843 rows=4 loops=3)
+               Sort Key: l_returnflag, l_linestatus
+               Sort Method: quicksort  Memory: 27kB
+               Buffers: shared hit=2210 read=65348
+               Worker 0:  Sort Method: quicksort  Memory: 27kB
+               Worker 1:  Sort Method: quicksort  Memory: 27kB
+               ->  Partial HashAggregate  (cost=137995.70..137995.83 rows=6 width=236) (actual time=1179.792..1179.799 rows=4 loops=3)
+                     Group Key: l_returnflag, l_linestatus
+                     Batches: 1  Memory Usage: 24kB
+                     Buffers: shared hit=2196 read=65348
+                     Worker 0:  Batches: 1  Memory Usage: 24kB
+                     Worker 1:  Batches: 1  Memory Usage: 24kB
+                     ->  Parallel Seq Scan on lineitem  (cost=0.00..86298.18 rows=1477072 width=25) (actual time=10.851..233.948 rows=1183345 loops=3)
+                           Filter: (l_shipdate <= '1998-09-02'::date)
+                           Rows Removed by Filter: 17000
+                           Buffers: shared hit=2196 read=65348
+ Planning:
+   Buffers: shared hit=125 read=3
+ Planning Time: 1.945 ms
+ JIT:
+   Functions: 27
+   Options: Inlining false, Optimization false, Expressions true, Deforming true
+   Timing: Generation 4.052 ms, Inlining 0.000 ms, Optimization 1.871 ms, Emission 30.695 ms, Total 36.618 ms
+ Execution Time: 1226.754 ms
+(31 rows)
+
+Time: 1231.104 ms (00:01.231)
