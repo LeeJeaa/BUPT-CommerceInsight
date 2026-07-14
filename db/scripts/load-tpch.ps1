@@ -8,6 +8,8 @@ param(
     [string]$Database = "tpc_commerce",
     [string]$User = "tpc_admin",
     [string]$LogDir = "../../report/import_logs",
+    [switch]$FinalizeSchema,
+    [switch]$LoadBaselineIndexes,
     [switch]$DryRun
 )
 
@@ -69,7 +71,7 @@ function Write-Log {
     param([string]$Message)
     $line = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message"
     Write-Host $line
-    Add-Content -Path $logFile -Value $line
+    Add-Content -Path $logFile -Value $line -Encoding UTF8
 }
 
 function Invoke-LoggedCommand {
@@ -86,8 +88,16 @@ function Invoke-LoggedCommand {
     $stdout = $process.StandardOutput.ReadToEnd()
     $stderr = $process.StandardError.ReadToEnd()
     $process.WaitForExit()
-    if ($stdout) { $stdout.TrimEnd() | Tee-Object -FilePath $logFile -Append }
-    if ($stderr) { $stderr.TrimEnd() | Tee-Object -FilePath $logFile -Append }
+    if ($stdout) {
+        $text = $stdout.TrimEnd()
+        Write-Host $text
+        Add-Content -Path $logFile -Value $text -Encoding UTF8
+    }
+    if ($stderr) {
+        $text = $stderr.TrimEnd()
+        Write-Host $text
+        Add-Content -Path $logFile -Value $text -Encoding UTF8
+    }
     if ($process.ExitCode -ne 0) {
         throw "Command failed with exit code $($process.ExitCode): $($Command -join ' ')"
     }
@@ -125,6 +135,27 @@ foreach ($table in $tables) {
     Invoke-LoggedCommand @("docker", "cp", $hostFile, "$Container`:$containerFile")
     Invoke-LoggedCommand @("docker", "exec", $Container, "bash", "-lc", "sed 's/|$//' '$containerFile' > '$normalizedFile'")
     Invoke-LoggedCommand @("docker", "exec", $Container, "psql", "-v", "ON_ERROR_STOP=1", "-U", $User, "-d", $Database, "-c", $copySql)
+}
+
+if ($FinalizeSchema) {
+    $postCopyAssets = @(
+        "/sql/V4__add_constraints.sql",
+        "/sql/V8__triggers.sql",
+        "/sql/V9__procedures.sql",
+        "/sql/V13__migrate_legacy_stock_change_log.sql"
+    )
+    if ($LoadBaselineIndexes) {
+        $postCopyAssets += "/sql/V10__indexes_baseline.sql"
+    }
+    foreach ($asset in $postCopyAssets) {
+        Write-Log "Applying post-COPY asset: $asset"
+        if (-not $DryRun) {
+            Invoke-LoggedCommand @(
+                "docker", "exec", $Container, "psql", "-v", "ON_ERROR_STOP=1",
+                "-U", $User, "-d", $Database, "-f", $asset
+            )
+        }
+    }
 }
 
 Write-Log "TPC-H load completed. Run count-tables.sql to verify row counts."

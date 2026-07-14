@@ -1,0 +1,24 @@
+﻿{
+    "capturedAt":  "2026-07-13T21:33:36.1849705+08:00",
+    "scaleFactor":  "0.6",
+    "indexMode":  "without_index",
+    "query":  "all",
+    "threadCount":  1,
+    "files":  [
+                  "D:\\git\\TPC CommerceInsight_publish\\report\\explain_plans\\tpch_q1_explain_without_index_sf0.6_20260713_213328.txt",
+                  "D:\\git\\TPC CommerceInsight_publish\\report\\explain_plans\\tpch_q5_explain_without_index_sf0.6_20260713_213328.txt",
+                  "D:\\git\\TPC CommerceInsight_publish\\report\\explain_plans\\tpch_q12_explain_without_index_sf0.6_20260713_213328.txt",
+                  "D:\\git\\TPC CommerceInsight_publish\\report\\explain_plans\\tpch_q14_explain_without_index_sf0.6_20260713_213328.txt"
+              ],
+    "parameters":  {
+                       "q1ShipDate":  "1998-09-02",
+                       "q5Region":  "ASIA",
+                       "q5StartDate":  "1994-01-01",
+                       "q5EndDate":  "1995-01-01",
+                       "q12ShipMode1":  "MAIL",
+                       "q12ShipMode2":  "SHIP",
+                       "q12StartDate":  "1994-01-01",
+                       "q12EndDate":  "1995-01-01",
+                       "q14Month":  "1995-09-01"
+                   }
+}

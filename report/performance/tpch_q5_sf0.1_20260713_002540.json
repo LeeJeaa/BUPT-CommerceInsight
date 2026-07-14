@@ -1,0 +1,164 @@
+{
+  "summary": {
+    "testName": "TPC-H Q5 Concurrent Query Test SF0.1",
+    "testType": "tpch",
+    "operation": "q5",
+    "scaleFactor": "0.1",
+    "threadCount": 4,
+    "totalRequests": 20,
+    "successCount": 20,
+    "failCount": 0,
+    "avgLatencyMs": 37.891,
+    "p95LatencyMs": 60.526,
+    "maxLatencyMs": 61.621,
+    "minLatencyMs": 23.178,
+    "throughput": 95.976,
+    "startedAt": "2026-07-13T00:25:41+08:00",
+    "endedAt": "2026-07-13T00:25:41+08:00",
+    "elapsedSeconds": 0.208,
+    "targetUrl": "http://localhost:8080/api/tpch/q5?regionName=ASIA&startDate=1994-01-01&endDate=1995-01-01",
+    "qps": 95.976
+  },
+  "samples": [
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 58.782,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 60.469,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 60.273,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 61.621,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 24.034,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 23.852,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 24.896,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 24.284,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 25.831,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 26.957,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 34.93,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 46.148,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 23.178,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 25.174,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 23.805,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 45.607,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 42.573,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 43.819,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 37.826,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "q5",
+      "ok": true,
+      "latency_ms": 43.758,
+      "status_code": 200,
+      "error": ""
+    }
+  ]
+}

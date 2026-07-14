@@ -1,0 +1,164 @@
+{
+  "summary": {
+    "testName": "TPC-C new-order Concurrent Transaction Test SF0.1",
+    "testType": "tpcc",
+    "operation": "new-order",
+    "scaleFactor": "0.1",
+    "threadCount": 4,
+    "totalRequests": 20,
+    "successCount": 20,
+    "failCount": 0,
+    "avgLatencyMs": 52.562,
+    "p95LatencyMs": 99.803,
+    "maxLatencyMs": 112.713,
+    "minLatencyMs": 20.622,
+    "throughput": 71.755,
+    "startedAt": "2026-07-13T00:25:42+08:00",
+    "endedAt": "2026-07-13T00:25:42+08:00",
+    "elapsedSeconds": 0.279,
+    "targetUrl": "http://localhost:8080/api/tpcc/new-order",
+    "tps": 71.755
+  },
+  "samples": [
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 77.217,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 88.234,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 99.124,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 112.713,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 34.024,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 57.458,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 33.326,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 35.022,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 67.086,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 31.238,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 52.114,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 40.332,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 20.622,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 51.69,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 50.366,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 30.046,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 50.823,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 30.492,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 30.412,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "new-order",
+      "ok": true,
+      "latency_ms": 58.897,
+      "status_code": 200,
+      "error": ""
+    }
+  ]
+}

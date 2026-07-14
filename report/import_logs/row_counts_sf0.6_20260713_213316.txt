@@ -1,0 +1,22 @@
+Data scale: SF=0.6
+Output format is aligned.
+Pager usage is off.
+Timing is on.
+  table_name   | row_count
+---------------+-----------
+ customer      |     90000
+ district      |         0
+ item          |         0
+ lineitem      |   3601036
+ nation        |        25
+ orders        |    900000
+ part          |    120000
+ partsupp      |    480000
+ region        |         5
+ stock         |         0
+ supplier      |      6000
+ tpcc_customer |         0
+ warehouse     |         0
+(13 rows)
+
+Time: 848.623 ms

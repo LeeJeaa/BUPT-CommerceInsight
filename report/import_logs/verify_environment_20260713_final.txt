@@ -1,0 +1,22 @@
+
+Check                                        Passed Detail
+-----                                        ------ ------
+Docker CLI installed                           True Required for PostgreSQL Docker.
+Docker daemon running                          True Client:
+Compose config valid                           True docker compose -f db/docker-compose.yml config
+Init script LF only                            True db/init/00_run_sql_assets.sh
+Directory exists: sql                          True D:\git\TPC CommerceInsight_publish\sql
+Directory exists: db/init                      True D:\git\TPC CommerceInsight_publish\db\init
+Directory exists: db/scripts                   True D:\git\TPC CommerceInsight_publish\db\scripts
+Directory exists: report/import_logs           True D:\git\TPC CommerceInsight_publish\report\import_logs
+Directory exists: report/explain_plans         True D:\git\TPC CommerceInsight_publish\report\explain_plans
+Directory exists: report/performance           True D:\git\TPC CommerceInsight_publish\report\performance
+Directory exists: test                         True D:\git\TPC CommerceInsight_publish\test
+SQL assets present                             True Expected V*.sql files under sql/.
+V13 migration asset present                    True D:\git\TPC CommerceInsight_publish\sql\V13__migrate_legacy_stock...
+New-volume init invokes V13                    True D:\git\TPC CommerceInsight_publish\db\init\00_run_sql_assets.sh
+Formal COPY deferral supported                 True V1/V2/V3 -> COPY -> V4/V8/V9/V13/V10
+Existing-volume migration entrypoint present   True db/scripts/migrate-db.ps1
+Reset requires explicit Force                  True D:\git\TPC CommerceInsight_publish\db\scripts\reset-db.ps1
+TPC-H HTTP test entrypoint present             True test/tpch_concurrent_test.py
+TPC-C HTTP test entrypoint present             True test/tpcc_concurrent_test.py

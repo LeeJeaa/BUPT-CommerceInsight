@@ -1,6 +1,7 @@
 param(
     [string]$ComposeFile = "../docker-compose.yml",
-    [string]$InitScript = "../init/00_run_sql_assets.sh"
+    [string]$InitScript = "../init/00_run_sql_assets.sh",
+    [string]$GitExecutable = ""
 )
 
 $ErrorActionPreference = "Continue"
@@ -37,6 +38,20 @@ Add-Check $checks "Compose config valid" ($LASTEXITCODE -eq 0) "docker compose -
 $initBytes = [System.IO.File]::ReadAllBytes($initPath)
 Add-Check $checks "Init script LF only" (-not ($initBytes -contains 13)) "db/init/00_run_sql_assets.sh"
 
+$gitPath = if ($GitExecutable) {
+    (Resolve-Path -LiteralPath $GitExecutable -ErrorAction SilentlyContinue).Path
+}
+else {
+    (Get-Command git -ErrorAction SilentlyContinue).Source
+}
+if ($gitPath) {
+    $gitStage = & $gitPath -C $root ls-files --stage -- db/init/00_run_sql_assets.sh 2>&1
+    Add-Check $checks "Init script Git mode 100755" ($LASTEXITCODE -eq 0 -and $gitStage -match '^100755\s') ($gitStage -join "")
+}
+else {
+    Add-Check $checks "Init script Git mode 100755" $false "Git CLI unavailable; pass -GitExecutable to verify the index mode."
+}
+
 $requiredDirs = @("sql", "db/init", "db/scripts", "report/import_logs", "report/explain_plans", "report/performance", "test")
 foreach ($dir in $requiredDirs) {
     $path = Join-Path $root $dir
@@ -44,7 +59,25 @@ foreach ($dir in $requiredDirs) {
 }
 
 $sqlFiles = Get-ChildItem -Path (Join-Path $root "sql") -Filter "V*.sql" -ErrorAction SilentlyContinue
-Add-Check $checks "SQL assets present" (($sqlFiles | Measure-Object).Count -gt 0) "Expected A's V*.sql files under sql/; missing is OK before A delivery."
+Add-Check $checks "SQL assets present" (($sqlFiles | Measure-Object).Count -gt 0) "Expected V*.sql files under sql/."
+
+$v13Path = Join-Path $root "sql/V13__migrate_legacy_stock_change_log.sql"
+$initText = Get-Content -Raw -LiteralPath $initPath
+Add-Check $checks "V13 migration asset present" (Test-Path $v13Path) $v13Path
+Add-Check $checks "New-volume init invokes V13" ($initText -match "V13__migrate_legacy_stock_change_log\.sql") $initPath
+$loadTpchText = Get-Content -Raw (Join-Path $root "db/scripts/load-tpch.ps1")
+Add-Check $checks "Formal COPY deferral supported" (
+    $initText -match "DEFER_POST_COPY_ASSETS" -and $loadTpchText -match "FinalizeSchema"
+) "V1/V2/V3 -> COPY -> V4/V8/V9/V13/V10"
+Add-Check $checks "Existing-volume migration entrypoint present" (Test-Path (Join-Path $root "db/scripts/migrate-db.ps1")) "db/scripts/migrate-db.ps1"
+
+$resetPath = Join-Path $root "db/scripts/reset-db.ps1"
+$resetText = if (Test-Path $resetPath) { Get-Content -Raw -LiteralPath $resetPath } else { "" }
+Add-Check $checks "Reset requires explicit Force" ($resetText -match '\[switch\]\$Force' -and $resetText -match 'if \(-not \$Force\)') $resetPath
+Add-Check $checks "TPC-H HTTP test entrypoint present" (Test-Path (Join-Path $root "test/tpch_concurrent_test.py")) "test/tpch_concurrent_test.py"
+Add-Check $checks "TPC-C HTTP test entrypoint present" (Test-Path (Join-Path $root "test/tpcc_concurrent_test.py")) "test/tpcc_concurrent_test.py"
+Add-Check $checks "TPC-C EXPLAIN entrypoint present" (Test-Path (Join-Path $root "db/scripts/run-tpcc-explain.ps1")) "db/scripts/run-tpcc-explain.ps1"
+Add-Check $checks "TPC-C prerequisite loader present" (Test-Path (Join-Path $root "db/scripts/load-tpcc-prerequisites.ps1")) "db/scripts/load-tpcc-prerequisites.ps1"
 
 $checks | Format-Table -AutoSize
 

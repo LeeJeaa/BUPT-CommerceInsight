@@ -24,3 +24,9 @@ YYYYMMDD_<module>_<action>_<scale-or-context>.png
 - 不使用默认截图文件名。
 - 每张截图必须能从文件名判断来源和用途。
 - 能用文本日志证明的操作，保留 `.log/.txt` 原始文本，同时保留一张 PNG 便于报告插图。
+
+2026-07-13 SF=0.6 正式证据：
+
+- `20260713_dashboard_real_api_sf06.png`
+- `20260713_performance_tpch_real_api_sf06.png`
+- `20260713_performance_tpcc_real_api_course_minimal.png`

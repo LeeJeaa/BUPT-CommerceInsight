@@ -1,0 +1,136 @@
+Pager usage is off.
+Timing is on.
+ transaction_name |   data_scale   |          captured_at
+------------------+----------------+-------------------------------
+ new-order        | course-minimal | 2026-07-13 21:36:36.325475+08
+(1 row)
+
+Time: 0.287 ms
+BEGIN
+Time: 0.084 ms
+            set_config
+-----------------------------------
+ explain-new-order-20260713_213635
+(1 row)
+
+Time: 0.198 ms
+ set_config
+------------
+ new_order
+(1 row)
+
+Time: 0.162 ms
+Time: 0.884 ms
+statement=contextLookup
+                                                   QUERY PLAN
+-----------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.00..4.12 rows=1 width=4) (actual time=0.034..0.036 rows=1 loops=1)
+   Buffers: shared hit=3
+   ->  Nested Loop  (cost=0.00..2.54 rows=1 width=12) (actual time=0.020..0.021 rows=1 loops=1)
+         Buffers: shared hit=2
+         ->  Seq Scan on warehouse w  (cost=0.00..1.25 rows=1 width=4) (actual time=0.014..0.015 rows=1 loops=1)
+               Filter: (w_id = 1)
+               Buffers: shared hit=1
+         ->  Seq Scan on district d  (cost=0.00..1.28 rows=1 width=8) (actual time=0.004..0.004 rows=1 loops=1)
+               Filter: ((d_id = 1) AND (d_w_id = 1))
+               Buffers: shared hit=1
+   ->  Seq Scan on tpcc_customer c  (cost=0.00..1.56 rows=1 width=8) (actual time=0.013..0.014 rows=1 loops=1)
+         Filter: ((c_d_id = 1) AND (c_w_id = 1) AND (c_id = 1))
+         Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=93
+ Planning Time: 0.450 ms
+ Execution Time: 0.117 ms
+(17 rows)
+
+Time: 1.589 ms
+statement=updateDistrict
+                                               QUERY PLAN
+---------------------------------------------------------------------------------------------------------
+ Update on district  (cost=0.00..1.29 rows=1 width=10) (actual time=0.322..0.324 rows=1 loops=1)
+   Buffers: shared hit=23 read=2
+   ->  Seq Scan on district  (cost=0.00..1.29 rows=1 width=10) (actual time=0.007..0.008 rows=1 loops=1)
+         Filter: ((d_w_id = 1) AND (d_id = 1))
+         Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=3
+ Planning Time: 0.089 ms
+ Execution Time: 0.426 ms
+(9 rows)
+
+Time: 0.898 ms
+statement=insertOrder
+                                            QUERY PLAN
+---------------------------------------------------------------------------------------------------
+ Insert on tpcc_orders  (cost=0.00..0.01 rows=0 width=0) (actual time=0.640..0.641 rows=0 loops=1)
+   Buffers: shared hit=22 read=2 dirtied=3 written=2
+   ->  Result  (cost=0.00..0.01 rows=1 width=36) (actual time=0.005..0.005 rows=1 loops=1)
+ Planning Time: 0.022 ms
+ Trigger for constraint fk_tpcc_orders_district: time=0.267 calls=1
+ Trigger for constraint fk_tpcc_orders_tpcc_customer: time=0.115 calls=1
+ Execution Time: 1.037 ms
+(7 rows)
+
+Time: 1.413 ms
+statement=insertNewOrder
+                                           QUERY PLAN
+-------------------------------------------------------------------------------------------------
+ Insert on new_order  (cost=0.00..0.01 rows=0 width=0) (actual time=0.603..0.604 rows=0 loops=1)
+   Buffers: shared hit=20 read=1 dirtied=3 written=2
+   ->  Result  (cost=0.00..0.01 rows=1 width=12) (actual time=0.001..0.001 rows=1 loops=1)
+ Planning Time: 0.013 ms
+ Trigger for constraint fk_new_order_tpcc_orders: time=0.228 calls=1
+ Execution Time: 0.841 ms
+(6 rows)
+
+Time: 1.112 ms
+statement=itemStockLookup
+                                              QUERY PLAN
+-------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.00..3.17 rows=1 width=16) (actual time=0.008..0.009 rows=1 loops=1)
+   Buffers: shared hit=2
+   ->  Seq Scan on item i  (cost=0.00..1.44 rows=1 width=16) (actual time=0.004..0.004 rows=1 loops=1)
+         Filter: (i_id = 1001)
+         Rows Removed by Filter: 1
+         Buffers: shared hit=1
+   ->  Seq Scan on stock s  (cost=0.00..1.72 rows=1 width=8) (actual time=0.002..0.003 rows=1 loops=1)
+         Filter: ((s_i_id = 1001) AND (s_w_id = 1))
+         Rows Removed by Filter: 1
+         Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=69
+ Planning Time: 0.137 ms
+ Execution Time: 0.020 ms
+(14 rows)
+
+Time: 0.566 ms
+statement=updateStock
+                                              QUERY PLAN
+------------------------------------------------------------------------------------------------------
+ Update on stock  (cost=0.00..1.85 rows=1 width=18) (actual time=0.115..0.117 rows=1 loops=1)
+   Buffers: shared hit=12
+   ->  Seq Scan on stock  (cost=0.00..1.85 rows=1 width=18) (actual time=0.004..0.005 rows=1 loops=1)
+         Filter: ((s_quantity >= 1) AND (s_w_id = 1) AND (s_i_id = 1001))
+         Rows Removed by Filter: 1
+         Buffers: shared hit=1
+ Planning Time: 0.045 ms
+ Trigger trg_stock_quantity_change: time=6.242 calls=1
+ Execution Time: 6.390 ms
+(9 rows)
+
+Time: 6.823 ms
+statement=insertOrderLine
+                                            QUERY PLAN
+--------------------------------------------------------------------------------------------------
+ Insert on order_line  (cost=0.00..0.01 rows=0 width=0) (actual time=0.678..0.679 rows=0 loops=1)
+   Buffers: shared hit=26 read=1 dirtied=3 written=2
+   ->  Result  (cost=0.00..0.01 rows=1 width=162) (actual time=0.001..0.002 rows=1 loops=1)
+ Planning Time: 0.025 ms
+ Trigger for constraint fk_order_line_tpcc_orders: time=0.167 calls=1
+ Trigger for constraint fk_order_line_stock: time=0.037 calls=1
+ Execution Time: 0.895 ms
+(7 rows)
+
+Time: 1.338 ms
+ROLLBACK
+Time: 0.185 ms

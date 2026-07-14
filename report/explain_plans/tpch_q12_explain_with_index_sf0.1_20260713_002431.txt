@@ -1,0 +1,49 @@
+﻿Pager usage is off.
+Timing is on.
+ query_name | scale_factor | index_mode |          captured_at
+------------+--------------+------------+-------------------------------
+ q12        | 0.1          | with_index | 2026-07-13 00:24:37.076846+08
+(1 row)
+
+Time: 0.211 ms
+                                                                                        QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize GroupAggregate  (cost=17067.95..17094.93 rows=7 width=48) (actual time=30.155..32.224 rows=2 loops=1)
+   Group Key: (TRIM(BOTH FROM l.l_shipmode))
+   Buffers: shared hit=6449 read=5243 written=1301
+   ->  Gather Merge  (cost=17067.95..17094.77 rows=7 width=48) (actual time=30.008..32.217 rows=4 loops=1)
+         Workers Planned: 1
+         Workers Launched: 1
+         Buffers: shared hit=6449 read=5243 written=1301
+         ->  Partial GroupAggregate  (cost=16067.94..16093.98 rows=7 width=48) (actual time=28.399..28.534 rows=2 loops=2)
+               Group Key: (TRIM(BOTH FROM l.l_shipmode))
+               Buffers: shared hit=6449 read=5243 written=1301
+               ->  Sort  (cost=16067.94..16072.26 rows=1729 width=48) (actual time=28.258..28.305 rows=1578 loops=2)
+                     Sort Key: (TRIM(BOTH FROM l.l_shipmode))
+                     Sort Method: quicksort  Memory: 122kB
+                     Buffers: shared hit=6449 read=5243 written=1301
+                     Worker 0:  Sort Method: quicksort  Memory: 123kB
+                     ->  Parallel Hash Join  (cost=11987.57..15974.95 rows=1729 width=48) (actual time=20.164..27.958 rows=1578 loops=2)
+                           Hash Cond: (o.o_orderkey = l.l_orderkey)
+                           Buffers: shared hit=6441 read=5243 written=1301
+                           ->  Parallel Seq Scan on orders o  (cost=0.00..3530.35 rows=88235 width=20) (actual time=0.004..2.872 rows=75000 loops=2)
+                                 Buffers: shared hit=2648
+                           ->  Parallel Hash  (cost=11972.26..11972.26 rows=1225 width=15) (actual time=20.024..20.025 rows=1578 loops=2)
+                                 Buckets: 4096  Batches: 1  Memory Usage: 224kB
+                                 Buffers: shared hit=3779 read=5243 written=1301
+                                 ->  Parallel Bitmap Heap Scan on lineitem l  (cost=436.26..11972.26 rows=1225 width=15) (actual time=2.006..19.666 rows=1578 loops=2)
+                                       Recheck Cond: ((l_shipmode = ANY ('{MAIL,SHIP}'::bpchar[])) AND (l_receiptdate >= '1994-01-01'::date) AND (l_receiptdate < '1995-01-01'::date))
+                                       Filter: ((l_commitdate < l_receiptdate) AND (l_shipdate < l_commitdate))
+                                       Rows Removed by Filter: 11639
+                                       Heap Blocks: exact=4248
+                                       Buffers: shared hit=3779 read=5243 written=1301
+                                       ->  Bitmap Index Scan on idx_lineitem_shipmode_receiptdate  (cost=0.00..435.53 rows=26453 width=0) (actual time=2.119..2.119 rows=26433 loops=1)
+                                             Index Cond: ((l_shipmode = ANY ('{MAIL,SHIP}'::bpchar[])) AND (l_receiptdate >= '1994-01-01'::date) AND (l_receiptdate < '1995-01-01'::date))
+                                             Buffers: shared hit=1 read=29
+ Planning:
+   Buffers: shared hit=364
+ Planning Time: 0.879 ms
+ Execution Time: 32.338 ms
+(36 rows)
+
+Time: 34.041 ms

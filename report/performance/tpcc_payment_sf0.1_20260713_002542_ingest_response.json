@@ -1,0 +1,41 @@
+{
+  "code": 200,
+  "message": "success",
+  "data": {
+    "testName": "TPC-C payment Concurrent Transaction Test SF0.1",
+    "threadCount": 4,
+    "totalRequests": 20,
+    "successCount": 20,
+    "failCount": 0,
+    "avgLatencyMs": 34.36,
+    "maxLatencyMs": 47.8,
+    "minLatencyMs": 22.23,
+    "throughput": 107.45,
+    "records": [
+      {
+        "threadCount": 4,
+        "avgLatencyMs": 52.56,
+        "throughput": 71.75
+      },
+      {
+        "threadCount": 4,
+        "avgLatencyMs": 34.36,
+        "throughput": 107.45
+      }
+    ],
+    "chartData": {
+      "throughputSeries": [
+        71.75,
+        107.45
+      ],
+      "xAxis": [
+        4,
+        4
+      ],
+      "latencySeries": [
+        52.56,
+        34.36
+      ]
+    }
+  }
+}

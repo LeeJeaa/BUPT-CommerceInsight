@@ -11,6 +11,7 @@ services:
       LOAD_BASELINE_INDEXES: "${LOAD_BASELINE_INDEXES:-true}"
       LOAD_SAMPLE_DATA: "${LOAD_SAMPLE_DATA:-false}"
       RUN_BASELINE_VALIDATION: "${RUN_BASELINE_VALIDATION:-false}"
+      DEFER_POST_COPY_ASSETS: "${DEFER_POST_COPY_ASSETS:-false}"
     ports:
       - "5432:5432"
     volumes:

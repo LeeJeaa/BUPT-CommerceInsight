@@ -1,0 +1,164 @@
+{
+  "summary": {
+    "testName": "TPC-C payment Concurrent Transaction Test SFcourse-minimal",
+    "testType": "tpcc",
+    "operation": "payment",
+    "scaleFactor": "course-minimal",
+    "threadCount": 4,
+    "totalRequests": 20,
+    "successCount": 20,
+    "failCount": 0,
+    "avgLatencyMs": 52.184,
+    "p95LatencyMs": 70.474,
+    "maxLatencyMs": 70.678,
+    "minLatencyMs": 31.655,
+    "throughput": 70.79,
+    "startedAt": "2026-07-13T21:36:38+08:00",
+    "endedAt": "2026-07-13T21:36:38+08:00",
+    "elapsedSeconds": 0.283,
+    "targetUrl": "http://localhost:8080/api/tpcc/payment",
+    "tps": 70.79
+  },
+  "samples": [
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 31.655,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 43.067,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 56.743,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 70.463,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 52.846,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 42.883,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 70.678,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 57.921,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 55.878,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 52.183,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 37.265,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 63.643,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 50.695,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 38.138,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 64.621,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 52.364,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 50.324,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 51.285,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 50.348,
+      "status_code": 200,
+      "error": ""
+    },
+    {
+      "operation": "payment",
+      "ok": true,
+      "latency_ms": 50.671,
+      "status_code": 200,
+      "error": ""
+    }
+  ]
+}

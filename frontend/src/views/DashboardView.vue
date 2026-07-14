@@ -21,7 +21,7 @@
     <div class="metric-grid">
       <MetricCard label="数据库" :value="dashboard.databaseName" :hint="dashboard.dockerStatus" icon="dashboard" />
       <MetricCard label="表数量" :value="dashboard.tableCount" hint="TPC-H + TPC-C + 应用辅助表" icon="tickets" />
-      <MetricCard label="数据规模" :value="dashboard.dataScale" hint="D 侧课程数据集导入口径" icon="coin" />
+      <MetricCard label="数据规模" :value="dashboard.dataScale" hint="当前数据库实时统计" icon="coin" />
       <MetricCard label="核心流程" value="12 步" hint="按冻结验收顺序演示" icon="trend" />
     </div>
     <div class="chart-grid">
@@ -60,6 +60,10 @@ async function loadDashboard() {
   try {
     const response = await queryDashboardSummary()
     dashboard.value = response.data
+  } catch (error) {
+    if (error.response?.status !== 401) {
+      console.error('Dashboard load failed', error)
+    }
   } finally {
     loading.value = false
   }

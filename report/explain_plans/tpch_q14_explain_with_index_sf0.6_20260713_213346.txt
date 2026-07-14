@@ -1,0 +1,40 @@
+Pager usage is off.
+Timing is on.
+ query_name | scale_factor | index_mode |          captured_at
+------------+--------------+------------+-------------------------------
+ q14        | 0.6          | with_index | 2026-07-13 21:34:00.933811+08
+(1 row)
+
+Time: 0.377 ms
+                                                                           QUERY PLAN
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=70844.65..70844.67 rows=1 width=32) (actual time=94.150..96.627 rows=1 loops=1)
+   Buffers: shared hit=65 read=27489 written=3
+   ->  Gather  (cost=70844.42..70844.63 rows=2 width=64) (actual time=93.597..96.613 rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=65 read=27489 written=3
+         ->  Partial Aggregate  (cost=69844.42..69844.43 rows=1 width=64) (actual time=91.405..91.408 rows=1 loops=3)
+               Buffers: shared hit=65 read=27489 written=3
+               ->  Parallel Hash Join  (cost=4705.61..69499.44 rows=19713 width=33) (actual time=29.308..85.580 rows=15226 loops=3)
+                     Hash Cond: (l.l_partkey = p.p_partkey)
+                     Buffers: shared hit=65 read=27489 written=3
+                     ->  Parallel Bitmap Heap Scan on lineitem l  (cost=653.38..65395.46 rows=19713 width=16) (actual time=8.527..55.102 rows=15226 loops=3)
+                           Recheck Cond: ((l_shipdate >= '1995-09-01'::date) AND (l_shipdate < '1995-10-01'::date))
+                           Heap Blocks: exact=8373
+                           Buffers: shared hit=1 read=25025 written=3
+                           ->  Bitmap Index Scan on idx_lineitem_shipdate  (cost=0.00..641.55 rows=47312 width=0) (actual time=5.358..5.359 rows=45677 loops=1)
+                                 Index Cond: ((l_shipdate >= '1995-09-01'::date) AND (l_shipdate < '1995-10-01'::date))
+                                 Buffers: shared hit=1 read=44
+                     ->  Parallel Hash  (cost=3169.88..3169.88 rows=70588 width=25) (actual time=20.176..20.176 rows=40000 loops=3)
+                           Buckets: 131072  Batches: 1  Memory Usage: 8320kB
+                           Buffers: shared read=2464
+                           ->  Parallel Seq Scan on part p  (cost=0.00..3169.88 rows=70588 width=25) (actual time=0.011..10.044 rows=40000 loops=3)
+                                 Buffers: shared read=2464
+ Planning:
+   Buffers: shared hit=248 read=56 dirtied=4
+ Planning Time: 0.901 ms
+ Execution Time: 96.691 ms
+(27 rows)
+
+Time: 99.047 ms

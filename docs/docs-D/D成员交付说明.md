@@ -1,164 +1,60 @@
-# D 成员交付说明
+# Docker、迁移与性能测试交付说明
 
-> 分支：`dev/d-devops-performance-report`  
-> 负责人：成员 D  
-> 范围：Docker PostgreSQL、正式数据导入、行数统计、EXPLAIN、性能测试、报告材料
+## 交付范围
 
-## 1. 已交付内容
+- Docker PostgreSQL 16 与版本化 SQL 初始化。
+- 已有数据库 volume 的非破坏性升级。
+- 带显式确认的数据库重置。
+- dbgen 数据生成、TPC-H COPY 导入和行数统计。
+- Q1/Q5/Q12/Q14 索引前后 `EXPLAIN ANALYZE`。
+- TPC-H/TPC-C 独立 HTTP 并发测试、CSV/JSON 归档和性能结果入库。
 
-### 1.1 Docker PostgreSQL 环境
+## 推荐执行顺序
 
-- `db/docker-compose.yml`
-- `db/init/00_run_sql_assets.sh`
-- `db/README.md`
+```powershell
+# 1. 环境检查
+powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\verify-environment.ps1
 
-数据库统一口径：
+# 2A. 已有 volume：只升级，不删除数据
+powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\migrate-db.ps1
+
+# 2B. 只有确需重建时才执行
+powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\reset-db.ps1 -Force
+
+# 3. 生成并导入 SF=0.1
+powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\generate-tpch.ps1 -ScaleFactor 0.1
+$env:DEFER_POST_COPY_ASSETS = "true"
+$env:LOAD_SAMPLE_DATA = "false"
+$env:LOAD_BASELINE_INDEXES = "false"
+powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\reset-db.ps1 -Force
+powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\load-tpch.ps1 -ScaleFactor 0.1 -DataDir <绝对数据目录> -FileExtension tbl -FinalizeSchema
+powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\count-tables.ps1
+
+# 4. 先无索引、后有索引，最终恢复标准索引
+powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\run-tpch-explain.ps1 -IndexMode without_index -Query all -ScaleFactor 0.1
+powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\run-tpch-explain.ps1 -IndexMode with_index -Query all -ScaleFactor 0.1
+
+# 5. 启动 dev 后端后执行 HTTP 压测
+python test\tpch_concurrent_test.py --query all --threads 4 --requests 20 --username admin --password admin123 --scale-factor 0.1
+python test\tpcc_concurrent_test.py --transaction all --threads 4 --requests 20 --username admin --password admin123 --scale-factor 0.1
+```
+
+## 连接口径
 
 ```text
 container: tpc-commerce-postgres
 database:  tpc_commerce
 user:      tpc_admin
-password:  tpc_password
 port:      5432
+backend:   jdbc:postgresql://localhost:5432/tpc_commerce
 ```
 
-初始化脚本只调用 `sql/V*.sql`，不在 `db/init/` 中维护第二套业务 SQL。
+不同设备各自开发时，`localhost` 只表示当前设备。每台设备本地运行同一套 Docker 数据库时可以使用上述配置；连接另一台设备时必须改成目标设备的局域网地址并配置网络访问。
 
-### 1.2 D 侧脚本
+## 结果位置
 
-- `db/scripts/reset-db.ps1`：重置 PostgreSQL 容器和 volume。
-- `db/scripts/smoke-db.ps1`：验证数据库连接。
-- `db/scripts/verify-environment.ps1`：检查 Docker、Compose、目录、LF、SQL 资产。
-- `db/scripts/inspect-tpch-data.ps1`：检查课程 TPC-H 数据集的行数、列数和末尾分隔符。
-- `db/scripts/load-tpch.ps1`：执行 TPC-H 数据 COPY 导入。
-- `db/scripts/count-tables.sql` / `count-tables.ps1`：统计 TPC-H/TPC-C 核心表行数。
-- `db/scripts/generate-tpch.ps1`：预留 dbgen 生成更大规模数据的流程。
-- `db/scripts/run-row-counts.ps1`：行数统计快捷入口。
-
-### 1.3 性能测试与报告材料
-
-- `test/performance_test.py`：HTTP 并发压测脚本，输出 JSON/CSV。
-- `report/performance/performance_mock.json`
-- `report/performance/performance_mock.csv`
-- `report/explain_plans/`：Q1/Q5/Q12/Q14 索引前后 EXPLAIN 结果模板。
-- `report/final/report-outline.md`
-- `report/final/course-guide-gap-check.md`
-- `report/final/a-branch-pull-check.md`
-- `report/final/d-day1-day3-status.md`
-
-## 2. 已验证结果
-
-### 2.1 环境验证
-
-已在本地 Docker Desktop 中验证：
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\verify-environment.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\smoke-db.ps1
-```
-
-验证结果：
-
-- Docker daemon 可用。
-- Compose 配置可解析。
-- `db/init/00_run_sql_assets.sh` 为 LF 换行。
-- PostgreSQL 16 容器可启动并连接。
-- A 的 `sql/V*.sql` 已存在并可初始化数据库。
-
-### 2.2 A SQL 初始化验证
-
-已验证 A 分支 SQL 可完成新库初始化：
-
-```text
-V1 -> V2 -> V3 -> V4 -> V8 -> V9 -> V10
-```
-
-可创建 24 张 public 表，包括 TPC-H、课程最小 TPC-C、应用辅助表。
-
-### 2.3 课程数据集导入验证
-
-已对 `资料/tpc-h数据(2)` 做本地检查，行数与 `dbgen -s 0.2` 示例一致，且没有末尾多余 `|`。
-
-已真实 COPY 导入成功：
-
-| 表 | 行数 |
-|---|---:|
-| `region` | 5 |
-| `nation` | 25 |
-| `supplier` | 2000 |
-| `customer` | 30000 |
-| `part` | 40000 |
-| `partsupp` | 160000 |
-| `orders` | 300000 |
-| `lineitem` | 1199969 |
-
-## 3. 使用方式
-
-启动数据库：
-
-```powershell
-docker compose -f db\docker-compose.yml up -d
-```
-
-重置数据库：
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\reset-db.ps1
-```
-
-导入课程数据集：
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\load-tpch.ps1 -ScaleFactor 0.2
-```
-
-统计行数：
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File db\scripts\count-tables.ps1
-```
-
-运行压测脚本示例：
-
-```powershell
-python test\performance_test.py `
-  --url "http://localhost:8080/api/tpch/q1?shipDate=2020-12-31" `
-  --threads 4 `
-  --requests 50 `
-  --test-name q1_sf02 `
-  --scale-factor 0.2 `
-  --output report/performance/q1_sf02.json
-```
-
-## 4. 对 A/B/C 的说明
-
-### 4.1 给 A
-
-- D 已验证 A 的 SQL 资产可初始化 PostgreSQL。
-- D 已验证当前课程数据集可 COPY 到 A 的 TPC-H 表结构。
-- 需要注意：当前课程数据日期范围是 2015-2021，而部分 TPC-H 查询默认参数仍是 1994/1995/1998，会导致查询结果为空。建议 A/B 调整默认演示参数或全部参数化。
-
-### 4.2 给 B
-
-- 后端连接配置请使用：
-
-```text
-jdbc:postgresql://localhost:5432/tpc_commerce
-username: tpc_admin
-password: tpc_password
-```
-
-- 若 B 在自己电脑开发，`localhost` 指 B 自己电脑，需要本机也跑 Docker PostgreSQL。
-- 若连接 D 的电脑，需要改为 D 机器的局域网 IP。
-
-### 4.3 给 C
-
-- C 可先用 `report/performance/performance_mock.json` 和 `.csv` 做性能图表。
-- 后续 D 会用真实压测结果替换同结构数据。
-
-## 5. 后续待办
-
-- 生成或准备不低于 600M 的正式性能数据集。
-- 在无索引和有索引两种模式下分别保存 Q1/Q5/Q12/Q14 的 EXPLAIN。
-- B 接口完成后执行真实 HTTP 并发压测。
-- 将最终导入日志、行数统计、EXPLAIN、性能结果整理进课程设计报告。
+- 导入与迁移日志：`report/import_logs/`
+- 执行计划：`report/explain_plans/`
+- 性能结果：`report/performance/`
+- 联调截图：`report/screenshots/`
+- 详细开发记录：`docs/docs-D/D实验开发记录.md`

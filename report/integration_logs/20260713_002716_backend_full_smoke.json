@@ -1,0 +1,586 @@
+﻿[
+    {
+        "name":  "auth.login",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "token":  "[REDACTED]",
+                     "userId":  1,
+                     "username":  "admin",
+                     "role":  "admin",
+                     "status":  "approved"
+                 }
+    },
+    {
+        "name":  "health",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "status":  "ok",
+                     "service":  "commerce-insight-backend"
+                 }
+    },
+    {
+        "name":  "dashboard.summary",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "tableCount":  24,
+                     "databaseName":  "tpc_commerce",
+                     "dataScale":  "866602 rows",
+                     "dockerStatus":  "PostgreSQL connected",
+                     "rowCounts":  [
+                                       {
+                                           "tableName":  "region",
+                                           "rowCount":  5
+                                       },
+                                       {
+                                           "tableName":  "nation",
+                                           "rowCount":  25
+                                       },
+                                       {
+                                           "tableName":  "supplier",
+                                           "rowCount":  1000
+                                       },
+                                       {
+                                           "tableName":  "customer",
+                                           "rowCount":  15000
+                                       },
+                                       {
+                                           "tableName":  "part",
+                                           "rowCount":  20000
+                                       },
+                                       {
+                                           "tableName":  "partsupp",
+                                           "rowCount":  80000
+                                       },
+                                       {
+                                           "tableName":  "orders",
+                                           "rowCount":  150000
+                                       },
+                                       {
+                                           "tableName":  "lineitem",
+                                           "rowCount":  600572
+                                       }
+                                   ],
+                     "modules":  [
+                                     {
+                                         "name":  "TPC-H Q1/Q5/Q12/Q14",
+                                         "status":  "ready"
+                                     },
+                                     {
+                                         "name":  "TPC-C New-Order/Payment",
+                                         "status":  "ready"
+                                     },
+                                     {
+                                         "name":  "å¯¼å\u0085¥æ¸\u0085æ´ä¸éè¯¯æ¥å¿",
+                                         "status":  "ready"
+                                     },
+                                     {
+                                         "name":  "å¹¶åæ§è½ç»æå±ç¤º",
+                                         "status":  "ready"
+                                     }
+                                 ]
+                 }
+    },
+    {
+        "name":  "users.list",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "pageNo":  1,
+                     "pageSize":  10,
+                     "total":  2,
+                     "records":  [
+                                     {
+                                         "userId":  1,
+                                         "username":  "admin",
+                                         "realName":  "Admin",
+                                         "email":  "admin@example.com",
+                                         "role":  "admin",
+                                         "status":  "approved",
+                                         "createdAt":  "2026-07-13 00:25:06"
+                                     },
+                                     {
+                                         "userId":  2,
+                                         "username":  "user1",
+                                         "realName":  "æ®éç¨æ·",
+                                         "email":  "user1@example.com",
+                                         "role":  "user",
+                                         "status":  "approved",
+                                         "createdAt":  "2026-07-13 00:25:06"
+                                     }
+                                 ]
+                 }
+    },
+    {
+        "name":  "query.customers",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "pageNo":  1,
+                     "pageSize":  5,
+                     "total":  603,
+                     "records":  [
+                                     {
+                                         "customerKey":  29,
+                                         "customerName":  "Customer#000000029",
+                                         "nationName":  "ALGERIA",
+                                         "accountBalance":  7618.27,
+                                         "marketSegment":  "FURNITURE"
+                                     },
+                                     {
+                                         "customerKey":  48,
+                                         "customerName":  "Customer#000000048",
+                                         "nationName":  "ALGERIA",
+                                         "accountBalance":  3792.50,
+                                         "marketSegment":  "BUILDING"
+                                     },
+                                     {
+                                         "customerKey":  73,
+                                         "customerName":  "Customer#000000073",
+                                         "nationName":  "ALGERIA",
+                                         "accountBalance":  4288.50,
+                                         "marketSegment":  "BUILDING"
+                                     },
+                                     {
+                                         "customerKey":  76,
+                                         "customerName":  "Customer#000000076",
+                                         "nationName":  "ALGERIA",
+                                         "accountBalance":  5745.33,
+                                         "marketSegment":  "FURNITURE"
+                                     },
+                                     {
+                                         "customerKey":  80,
+                                         "customerName":  "Customer#000000080",
+                                         "nationName":  "ALGERIA",
+                                         "accountBalance":  7383.53,
+                                         "marketSegment":  "FURNITURE"
+                                     }
+                                 ]
+                 }
+    },
+    {
+        "name":  "query.orderRevenue",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "pageNo":  1,
+                     "pageSize":  5,
+                     "total":  0,
+                     "records":  [
+
+                                 ]
+                 }
+    },
+    {
+        "name":  "query.partSupplier",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "pageNo":  1,
+                     "pageSize":  5,
+                     "total":  4384,
+                     "records":  [
+                                     {
+                                         "partKey":  11,
+                                         "partName":  "spring maroon seashell almond orchid",
+                                         "supplierName":  "Supplier#000000012       ",
+                                         "nationName":  "INDIA",
+                                         "availQty":  4540,
+                                         "supplyCost":  709.87
+                                     },
+                                     {
+                                         "partKey":  11,
+                                         "partName":  "spring maroon seashell almond orchid",
+                                         "supplierName":  "Supplier#000000262       ",
+                                         "nationName":  "SAUDI ARABIA",
+                                         "availQty":  4729,
+                                         "supplyCost":  894.90
+                                     },
+                                     {
+                                         "partKey":  11,
+                                         "partName":  "spring maroon seashell almond orchid",
+                                         "supplierName":  "Supplier#000000512       ",
+                                         "nationName":  "MOROCCO",
+                                         "availQty":  3708,
+                                         "supplyCost":  818.74
+                                     },
+                                     {
+                                         "partKey":  11,
+                                         "partName":  "spring maroon seashell almond orchid",
+                                         "supplierName":  "Supplier#000000762       ",
+                                         "nationName":  "SAUDI ARABIA",
+                                         "availQty":  3213,
+                                         "supplyCost":  471.98
+                                     },
+                                     {
+                                         "partKey":  66,
+                                         "partName":  "cornflower pale almond lemon linen",
+                                         "supplierName":  "Supplier#000000067       ",
+                                         "nationName":  "EGYPT",
+                                         "availQty":  3077,
+                                         "supplyCost":  809.13
+                                     }
+                                 ]
+                 }
+    },
+    {
+        "name":  "tpch.q1",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "queryName":  "TPC-H Q1 å®ä»·æ±æ»æ¥è¡¨æ¥è¯¢",
+                     "elapsedMs":  166,
+                     "rowCount":  4,
+                     "records":  [
+                                     {
+                                         "returnFlag":  "A",
+                                         "lineStatus":  "F",
+                                         "sumQuantity":  3774200.00,
+                                         "sumBasePrice":  5320753880.69,
+                                         "sumDiscountedPrice":  5054096266.6828,
+                                         "sumCharge":  5256751331.449234,
+                                         "avgQuantity":  25.5375871168549970,
+                                         "avgPrice":  36002.123829014142,
+                                         "avgDisc":  0.05014459706340077136,
+                                         "countOrder":  147790
+                                     },
+                                     {
+                                         "returnFlag":  "N",
+                                         "lineStatus":  "F",
+                                         "sumQuantity":  95257.00,
+                                         "sumBasePrice":  133737795.84,
+                                         "sumDiscountedPrice":  127132372.6512,
+                                         "sumCharge":  132286291.229445,
+                                         "avgQuantity":  25.3006640106241700,
+                                         "avgPrice":  35521.326916334661,
+                                         "avgDisc":  0.04939442231075697211,
+                                         "countOrder":  3765
+                                     },
+                                     {
+                                         "returnFlag":  "N",
+                                         "lineStatus":  "O",
+                                         "sumQuantity":  7679822.00,
+                                         "sumBasePrice":  10823487077.24,
+                                         "sumDiscountedPrice":  10282025059.1390,
+                                         "sumCharge":  10693158047.350890,
+                                         "avgQuantity":  25.5384548876680988,
+                                         "avgPrice":  35992.388423761955,
+                                         "avgDisc":  0.05008945317176339137,
+                                         "countOrder":  300716
+                                     },
+                                     {
+                                         "returnFlag":  "R",
+                                         "lineStatus":  "F",
+                                         "sumQuantity":  3785523.00,
+                                         "sumBasePrice":  5337950526.47,
+                                         "sumDiscountedPrice":  5071818532.9420,
+                                         "sumCharge":  5274405503.049367,
+                                         "avgQuantity":  25.5259438574251017,
+                                         "avgPrice":  35994.029214030924,
+                                         "avgDisc":  0.04998927856184381764,
+                                         "countOrder":  148301
+                                     }
+                                 ],
+                     "chartData":  {
+                                       "series":  [
+                                                      5256751331.449234,
+                                                      132286291.229445,
+                                                      10693158047.350890,
+                                                      5274405503.049367
+                                                  ],
+                                       "xAxis":  [
+                                                     "A-F",
+                                                     "N-F",
+                                                     "N-O",
+                                                     "R-F"
+                                                 ]
+                                   },
+                     "explainPlan":  "PostgreSQL/MyBatisï¼æ­£å¼ EXPLAIN ç»æç±æ§è½æµè¯æµç¨å½æ¡£"
+                 }
+    },
+    {
+        "name":  "tpch.q5",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "queryName":  "TPC-H Q5 æ¬å°ä¾åºåæ¶å\u0085¥åæ",
+                     "elapsedMs":  2,
+                     "rowCount":  0,
+                     "records":  [
+
+                                 ],
+                     "chartData":  {
+                                       "series":  [
+
+                                                  ],
+                                       "xAxis":  [
+
+                                                 ]
+                                   },
+                     "explainPlan":  "PostgreSQL/MyBatisï¼æ­£å¼ EXPLAIN ç»æç±æ§è½æµè¯æµç¨å½æ¡£"
+                 }
+    },
+    {
+        "name":  "tpch.q12",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "queryName":  "TPC-H Q12 è¿éæ¹å¼ä¸è®¢åä¼å\u0085çº§åæ",
+                     "elapsedMs":  2,
+                     "rowCount":  0,
+                     "records":  [
+
+                                 ],
+                     "chartData":  {
+                                       "highPrioritySeries":  [
+
+                                                              ],
+                                       "lowPrioritySeries":  [
+
+                                                             ],
+                                       "xAxis":  [
+
+                                                 ]
+                                   },
+                     "explainPlan":  "PostgreSQL/MyBatisï¼æ­£å¼ EXPLAIN ç»æç±æ§è½æµè¯æµç¨å½æ¡£"
+                 }
+    },
+    {
+        "name":  "tpch.q14",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "queryName":  "TPC-H Q14 ä¿éæææ¥è¯¢",
+                     "elapsedMs":  1,
+                     "rowCount":  1,
+                     "records":  [
+                                     {
+                                         "promoRevenuePercent":  0
+                                     }
+                                 ],
+                     "chartData":  {
+                                       "pieData":  [
+                                                       {
+                                                           "name":  "ä¿éæ¶å\u0085¥",
+                                                           "value":  0
+                                                       },
+                                                       {
+                                                           "name":  "éä¿éæ¶å\u0085¥",
+                                                           "value":  100
+                                                       }
+                                                   ],
+                                       "gauge":  0
+                                   },
+                     "explainPlan":  "PostgreSQL/MyBatisï¼æ­£å¼ EXPLAIN ç»æç±æ§è½æµè¯æµç¨å½æ¡£"
+                 }
+    },
+    {
+        "name":  "tpcc.newOrder",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "transactionId":  "NO-20260713-31f71502",
+                     "status":  "committed",
+                     "orderId":  3022,
+                     "totalAmount":  65.40,
+                     "elapsedMs":  7
+                 }
+    },
+    {
+        "name":  "tpcc.payment",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "transactionId":  "PAY-20260713-aebe543f",
+                     "status":  "committed",
+                     "customerId":  1,
+                     "newBalance":  580.25,
+                     "elapsedMs":  3
+                 }
+    },
+    {
+        "name":  "performance.tpch",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "testName":  "TPC-H Q14 Concurrent Query Test SF0.1",
+                     "threadCount":  4,
+                     "totalRequests":  20,
+                     "successCount":  20,
+                     "failCount":  0,
+                     "avgLatencyMs":  19.02,
+                     "maxLatencyMs":  39.71,
+                     "minLatencyMs":  14.05,
+                     "throughput":  191.75,
+                     "records":  [
+                                     {
+                                         "threadCount":  4,
+                                         "avgLatencyMs":  184.65,
+                                         "throughput":  19.80
+                                     },
+                                     {
+                                         "threadCount":  4,
+                                         "avgLatencyMs":  37.89,
+                                         "throughput":  95.98
+                                     },
+                                     {
+                                         "threadCount":  4,
+                                         "avgLatencyMs":  29.32,
+                                         "throughput":  127.48
+                                     },
+                                     {
+                                         "threadCount":  4,
+                                         "avgLatencyMs":  19.02,
+                                         "throughput":  191.75
+                                     }
+                                 ],
+                     "chartData":  {
+                                       "throughputSeries":  [
+                                                                19.80,
+                                                                95.98,
+                                                                127.48,
+                                                                191.75
+                                                            ],
+                                       "xAxis":  [
+                                                     4,
+                                                     4,
+                                                     4,
+                                                     4
+                                                 ],
+                                       "latencySeries":  [
+                                                             184.65,
+                                                             37.89,
+                                                             29.32,
+                                                             19.02
+                                                         ]
+                                   }
+                 }
+    },
+    {
+        "name":  "performance.tpcc",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "testName":  "TPC-C payment Concurrent Transaction Test SF0.1",
+                     "threadCount":  4,
+                     "totalRequests":  20,
+                     "successCount":  20,
+                     "failCount":  0,
+                     "avgLatencyMs":  34.36,
+                     "maxLatencyMs":  47.80,
+                     "minLatencyMs":  22.23,
+                     "throughput":  107.45,
+                     "records":  [
+                                     {
+                                         "threadCount":  4,
+                                         "avgLatencyMs":  52.56,
+                                         "throughput":  71.75
+                                     },
+                                     {
+                                         "threadCount":  4,
+                                         "avgLatencyMs":  34.36,
+                                         "throughput":  107.45
+                                     }
+                                 ],
+                     "chartData":  {
+                                       "throughputSeries":  [
+                                                                71.75,
+                                                                107.45
+                                                            ],
+                                       "xAxis":  [
+                                                     4,
+                                                     4
+                                                 ],
+                                       "latencySeries":  [
+                                                             52.56,
+                                                             34.36
+                                                         ]
+                                   }
+                 }
+    },
+    {
+        "name":  "import.orders",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "taskId":  3,
+                     "tableName":  "orders",
+                     "fileName":  "integration-orders-invalid.tbl",
+                     "status":  "success",
+                     "totalRows":  2,
+                     "successRows":  0,
+                     "failedRows":  2,
+                     "elapsedMs":  10,
+                     "startedAt":  "2026-07-13 00:27:16",
+                     "endedAt":  "2026-07-13 00:27:16"
+                 }
+    },
+    {
+        "name":  "import.task",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "taskId":  3,
+                     "tableName":  "orders",
+                     "fileName":  "integration-orders-invalid.tbl",
+                     "status":  "success",
+                     "totalRows":  2,
+                     "successRows":  0,
+                     "failedRows":  2,
+                     "elapsedMs":  10,
+                     "startedAt":  "2026-07-13 00:27:16",
+                     "endedAt":  "2026-07-13 00:27:16"
+                 }
+    },
+    {
+        "name":  "import.errors",
+        "ok":  true,
+        "code":  200,
+        "message":  "success",
+        "data":  {
+                     "pageNo":  1,
+                     "pageSize":  10,
+                     "total":  2,
+                     "records":  [
+                                     {
+                                         "lineNumber":  1,
+                                         "fieldName":  "o_totalprice",
+                                         "fieldValue":  "-1.00",
+                                         "errorReason":  "field_out_of_range"
+                                     },
+                                     {
+                                         "lineNumber":  2,
+                                         "fieldName":  "o_orderstatus",
+                                         "fieldValue":  "X",
+                                         "errorReason":  "field_out_of_range"
+                                     }
+                                 ]
+                 }
+    },
+    {
+        "name":  "export.region",
+        "ok":  true,
+        "statusCode":  200,
+        "bytes":  505,
+        "preview":  "r_regionkey,r_name,r_comment\n0,AFRICA                   ,lar deposits. blithely final packages cajole. regular waters are final requests. regular accounts are according to "
+    }
+]

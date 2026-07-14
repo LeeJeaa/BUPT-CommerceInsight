@@ -1,0 +1,21 @@
+﻿Output format is aligned.
+Pager usage is off.
+Timing is on.
+  table_name   | row_count
+---------------+-----------
+ customer      |     15000
+ district      |         1
+ item          |         2
+ lineitem      |    600572
+ nation        |        25
+ orders        |    150000
+ part          |     20000
+ partsupp      |     80000
+ region        |         5
+ stock         |         2
+ supplier      |      1000
+ tpcc_customer |         1
+ warehouse     |         1
+(13 rows)
+
+Time: 29.414 ms

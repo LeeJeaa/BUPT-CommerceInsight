@@ -16,20 +16,31 @@ run_sql_asset() {
 run_sql_asset /sql/V1__create_tpch_tables.sql
 run_sql_asset /sql/V2__create_tpcc_tables.sql
 run_sql_asset /sql/V3__create_app_tables.sql
-run_sql_asset /sql/V4__add_constraints.sql
-run_sql_asset /sql/V8__triggers.sql
-run_sql_asset /sql/V9__procedures.sql
 
-if [[ "${LOAD_BASELINE_INDEXES:-true}" == "true" ]]; then
-  run_sql_asset /sql/V10__indexes_baseline.sql
+if [[ "${DEFER_POST_COPY_ASSETS:-false}" == "true" ]]; then
+  echo "[init] defer V4/V8/V9/V10/V11/V13 until the formal COPY load finishes"
 else
-  echo "[init] skip V10 indexes because LOAD_BASELINE_INDEXES is not true"
-fi
+  run_sql_asset /sql/V4__add_constraints.sql
+  run_sql_asset /sql/V8__triggers.sql
+  run_sql_asset /sql/V9__procedures.sql
 
-if [[ "${LOAD_SAMPLE_DATA:-false}" == "true" ]]; then
-  run_sql_asset /sql/V11__sample_data.sql
-else
-  echo "[init] skip V11 sample data because LOAD_SAMPLE_DATA is not true"
+  if [[ "${LOAD_BASELINE_INDEXES:-true}" == "true" ]]; then
+    run_sql_asset /sql/V10__indexes_baseline.sql
+  else
+    echo "[init] skip V10 indexes because LOAD_BASELINE_INDEXES is not true"
+  fi
+
+  if [[ "${LOAD_SAMPLE_DATA:-false}" == "true" ]]; then
+    run_sql_asset /sql/V11__sample_data.sql
+  else
+    echo "[init] skip V11 sample data because LOAD_SAMPLE_DATA is not true"
+  fi
+
+  # V13 is an idempotent compatibility migration. New volumes apply it as the
+  # final schema step; existing volumes use db/scripts/migrate-db.ps1 because
+  # docker-entrypoint-initdb.d only runs when PostgreSQL initializes an empty
+  # data directory.
+  run_sql_asset /sql/V13__migrate_legacy_stock_change_log.sql
 fi
 
 if [[ "${RUN_BASELINE_VALIDATION:-false}" == "true" ]]; then
